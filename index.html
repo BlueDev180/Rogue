@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no" />
-<title>Autobattler — Retro Paper</title>
+<title>Autobattler — Retro Paper (Units)</title>
 <style>
 html,body{height:100%;margin:0;background:rgb(232,216,184);color:rgb(44,44,44);
   font-family: -apple-system, system-ui, ui-sans-serif, Arial, sans-serif}
@@ -84,56 +84,49 @@ html,body{height:100%;margin:0;background:rgb(232,216,184);color:rgb(44,44,44);
 <div id="diag" class="diag">Init: pending…</div>
 
 <script>
-const SPRITES = {"Knight": {"idle": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABX0lEQVR4nO3av03DQBQH4AOxAQVNFkByRc0GSIgFkFKzCQtQR2IBRMUA1FSWmIIZQpHKiMixffbZft/XWYn/5Jd78r2zUwIAAAAAANbqLPcBq6rat32nruvs5+VA/t1cjHHQr8+3o5/d3D6Mccps1jCA5H+6UQpg6ZY8gNZgyvzPsx4NFkYBEJoCILTBPcB/TUvbPO3vPnNvKudM/sMM/uFVVe2326fe++92L0X/gFNWHdqUvn75979+q0AppaEDiGFK5q8HIDQFQGgKgNAm7wEer9+b28+blNKm0Qhd3X2EXZUYm/ybNMEdGUBl5c7fFIjQJr8DvH7fN7ZLr0NHI/8mU6CODKCycudvCkRoCoDQFAChKQBCUwCElmUVyBuRZcm/v/DLd6XfR49O/gAAk+syd7oc7SqO+ylwzrmS/wgivQtkAJU1y/w9ByA0BUBoXaZAbudlyR8AAAAAAKCDX2TagIG2/YqrAAAAAElFTkSuQmCC", "w": 48, "h": 48, "frames": 4, "fps": 6}, "attack": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABKklEQVR4nO3bsU3DQBQG4AOxAQVNFojkipoNkBALIKXOJixAHYkFEBUDUFNZYgpmgMJKhSCW/exc/L6vcZH4Ln/xy3dnpRQAAAAAAGCpzqIGaprm+9B32rYNm28KMtRhzgwXEYPsfby//PnZ9c195FSTkaEOc2U4DxsJTpACkJoCkJoCkNrgnXSfnfohxz6NkKGTOcOoU6DNZjv43t3uaczUYWTIncESiNQUgNRCX4T18bB+7a6Pq1LK6t+139XtW5VvLGWoQ0QGTwBSUwBSm30J9Px5V0rpdu7HPn4bSoY6RGTwBCA1BSA1BSA1BSA1BSA1BSA1BSA1BSA1/wcYSYbxlpABAAA4DX02DpeT/4rfvoLHk2GYxWdwDEpqCkBqCgAAAAAAAACwND9YcnZnHsmjWwAAAABJRU5ErkJggg==", "w": 48, "h": 48, "frames": 4, "fps": 8}, "death": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABZElEQVR4nO3cvU3DQBiAYYPYgIImCyC5omYDJMQCSKnZhAVSW2IBRMUA1FSWmIIZoDYhSnw527n7nqezEv9I0es7X6I0DQAAAAAAUKuz3Ads2/Zn33v6vs9+XkhxMcVBPz9ed752c/swxSmzEXAskwRQOgHHIYAKCfhwAuDkzBnwedajQWGOHgH+G7L2Vfp3H3NSlpJlCrRePyXv23WbHJeQTMCxeQZoBBw5YAFUQMDpAQuAxS0ZsFUgQpt9BHi8fhtuP6+aplkNhrSru/ewc1LmZQo0koDrIoBgBDw0ewAvX/eD7a7bhF6GY5zcARsBRhJwXQQQjICHBEBRcgfsewBCEwChCYDQsjwDLP2DKkh1dAA1rCAIOK7wq0ACjq34D5+yHfIvEPvUcBODRYwp53Kyq9jte4FzEkikZwABsyVSAKUT8AQEwFxOMuAxAVR/NyCeSCOAgNkSKYDSCRgAAAAAkvwCHFqA5YaHqusAAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 8}}, "Archer": {"idle": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABXElEQVR4nO3aq1LDQBQG4IVBVjCDAMEjRKHpE4DA83x4BAIPGpWHwDCDwLcCFYZOu80mm+R8n+sll/7dM9mzSUoAAAAAAMBSnZTeYdM0m33fadu2+HH5Jf88Z0Ps9OP9eednN7cPQxyymCUMIPkfbpACmLs5D6AlGDP/06J7g5lRAISmAAitdw/wX9Oyb572d5upN5VTJv9+ev/wpmk2V/fnR2//+fJd9Q84ZNVhn9rnL//jz98qUEqp7wCin5r56wEITQEQmgIgtNF7gKf1qvvGepVSuu40Qpd3r2FXJYYm/y5NcCYDqK7S+ZsCEdroV4DHt5/O69rr0NHIv8sUKJMBVFfp/E2BCE0BEJoCIDQFQGgKgNCKrAJ5IrIu+R+vdwEsYQlwzgNI/gAAZMqZP14Mdha7fVU45lTJfwCRngUygOqaZP7uAxCaAiC0nCmQy3ld8gcAAAAAAMiwBQKOg/a7/9SgAAAAAElFTkSuQmCC", "w": 48, "h": 48, "frames": 4, "fps": 6}, "attack": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABLklEQVR4nO3aoU7EQBQF0IEgV5AgQPAJVWj2C0Dg+T48AoEHjepHYEhW4FnRoAhs0762Q985apPdnekVN+3MtBQAAAAAAGCtjqIGaprm69Bv2rYNm28KMtRhzgwnEYN8e3t9/PW7q+u7yKkmI0Md5spwHDYS/EMKQGoKQGoKQGqDV9J9VuqHLL0bIUMnc4ZRu0AXt6eD//v+tBszdRgZdmHXMcZSGTwCkZoCkFroQVgfD9tN92G7KaVc/vnsd37zXOWJpQx1iMjgDkBqCkBqsz8C3b98llK6lfvS229DyVCHiAzuAKSmAKSmAKSmAKSmAKSmAKSmAKSmAKQ26iCslldpx5ChDmvIAAAA1K/PG3Rnk1/FTx/B48kwzOoz2AYlNQUgNQUAAAAAAAAAWJs9QcxwjsYQa2kAAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 8}, "death": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABVklEQVR4nO3aLVLDQBiA4cAgK5hBgOAIUWh6AhB4zodHVOBBo3KIGmYq8FSH0inZbpLufs/j+pNszJvdbNs0AAAAAABArc5yn7Bt259D3+m6Lvu4kOJijJN+frzu/ezu/mmMIbMRcCyjBFA6AcchgAoJ+P8EwMmZMuDzrGeDwhw9A/w1ZR2q9Pcx1qTMJcsS6ObxMvnY9WqT4xKSCTg2zwCNgCMHLIAKCDg9YAEwuzkDtgtEaJPPAC/LRf+N5aJpmtvelHb98BZ2Tcq0LIEGEnBdBBCMgPsmD+D5/bv3er3ahN6GY5jcAZsBBhJwXQQQjID7BEBRcgfsdwBCEwChCYDQsjwDzP2HKkh1dAA17CAIOK7wu0ACji18AKUTMJBsyN3jarSr2O9rhjEJJNISSMDsiBRA6QQ8AgEwlZMMeEgA1d8NiCfSDCBgdkQKoHQCBgAAAIAkW5BThAfGYIVNAAAAAElFTkSuQmCC", "w": 48, "h": 48, "frames": 4, "fps": 8}}, "Healer": {"idle": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABYUlEQVR4nO3avU3DQBgG4AOxAQUSygJIrqjZgIYFkCgYJC07UCCxACUDUFNZYgM6ZkgKKiMix/bZZ/t7ni4//smb++T7zk4JAAAAAABYq5PcO6yqatf2nbqusx+XX/Lv5myMnX5+vB387PrmboxDZrOGAST/441SAEu35AG0BlPmf5p1b7AwCoDQFAChDe4B/mta2uZpf7eZe1M5Z/IfZvAPr6pqd/nw3Hv775fHon/AMasObUqfv/z7n79VoJTS0AHEMCXz1wMQmgIgNAVAaJP3AK9X2+YbT5uU0qbRCF3cvoddlRib/Js0wR0ZQGXlzt8UiNAmvwLcf20br0uvQ0cj/yZToI4MoLJy528KRGgKgNAUAKEpAEJTAISWZRXIE5Flyb+/8Mt3pZ9Hj07+AACT6zJ3Oh/tLA77KXDMuZL/CCI9C2QAlTXL/N0HIDQFQGhdpkAu52XJHwAAAAAAoIM9O9R/hQiJyaQAAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 6}, "attack": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABMElEQVR4nO3asU3DQBQG4AOxQQoklAWQXKVmAxoWQKJgkLTZgQKJBSgZgJrKEhvQMQMUFhUisexn5/D7vipSkjv/xS/77lwKAAAAAACwVCdRAzVN83XoN23bhs03BRnqMGeGs4hBfry9Pv/53ebqJnKqychQh7kynIaNBP+QApCaApCaApDa4JV0n5X6IcfejZChkznDqF2gi7uHwf/9eLwfM3UYGXJn8AhEagpAaqEHYX08XW67D7t1KWW999nv/PqlyhNLGeoQkcEdgNQUgNRmfwS6fd+WUrqV+7G334aSoQ4RGdwBSE0BSE0BSE0BSE0BSE0BSE0BSE0BSG3UQVgtr9KOIUMdlpABAACoX5836FaTX8Vvn8HjyTDM4jPYBiU1BSA1BQAAAAAAAABYmm+8HmzuRqDiygAAAABJRU5ErkJggg==", "w": 48, "h": 48, "frames": 4, "fps": 8}, "death": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABZklEQVR4nO3cvU3DQBiAYYPYgAIJZQEkV9RsQMMCSBQZJC07UERiAUoGoKayxAbpmAFqE6LEl7Odu+95uvz4R4pe3/kSpWkAAAAAAIBaneXeYdu2P/ve03Vd9uNCiosxdvr58bbztdu7hzEOmY2AYxklgNIJOA4BVEjAhxMAJ2fKgM+z7g0Kc/QI8N+Qta/Sv9uYkzKXLFOg66eX5G0362WOU0gm4NjcAzQCjhywACog4PSABcDs5gzYKhChTT4CvN6s+k88L5qmWfSGtKv797BzUqZlCjSQgOsigGAE3Dd5AI9fq97jzXoZehmOYXIHbAQYSMB1EUAwAu4TAEXJHbDvAQhNAIQmAELLcg8w9w+qINXRAdSwgiDguMKvAgk4tuI/fMp2yL9A7FPDRQxmMaScy9HOYrfvGY5JIJHuAQTMlkgBlE7AIxAAUznJgIcEUP3VgHgijQACZkukAEonYAAAAABI8gvR/n/9cb0hEQAAAABJRU5ErkJggg==", "w": 48, "h": 48, "frames": 4, "fps": 8}}, "Assassin": {"idle": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABXklEQVR4nO3av03DQBQH4ANRpohEQcMIrqjZgAaJLdiACdiALZAoGYCaymsgpaAPBZURkXPx2Wf7fV9nJf6TX+7J985OCQAAAAAAWKuz0gdsmmbf9522bYufl1/yz3MxxkE/P94OfnZzez/GKYtZwwCS//FGKYClW/IAWoMp8z8vejRYGAVAaAqA0Ab3AP81LX3ztL/7zL2pnDP5DzP4hzdNs3/cbk/e/2W3q/oHHLPq0Kf29cv/9Ou3CpRSGjqAGKZm/noAQlMAhKYACG3yHuDhadPdTpuU0nWnEbq6ew+7KjE2+XdpgjMZQHWVzt8UiNAmvwO8Pn93tmuvQ0cj/y5ToEwGUF2l8zcFIjQFQGgKgNAUAKEpAEIrsgrkjci65H+68Mt3td9Hj07+AACTy5k7XY52FYd9VTjnXMl/BJHeBTKA6ppl/p4DEJoCILScKZDbeV3yBwAAAAAAyPADRW6BtTlyhCYAAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 6}, "attack": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABMklEQVR4nO3asU3DQBQG4ANRpohEQcMIrqjZgAaJLdiACdiALZAoGYCaymsguaCHwkqFIJb9bB9+39ekSHLnv/hl351LAQAAAAAAtuokaqCmab6O/aZt27D55iBDHZbMcBYxyMH728uv311d30ZONRsZ6rBUhtOwkeAfUgBSUwBSUwBSG72SHrJSP2bt3QgZepkzTNoFut/vR//3qeumTB1Ghi7sOqZYK4NHIFJTAFILPQgb4u5h13+WXSnl8s9nv4ub1ypPLGWoQ0QGdwBSUwBSW/wR6Pnxs5TSr9zX3n4bS4Y6RGRwByA1BSA1BSA1BSA1BSA1BSA1BSA1BSC1SQdhtbxKO4UMddhCBgAAoH5D3qA7n/0qfvoIHk+GcTafwTYoqSkAqSkAAAAAAAAAwNZ8AzhKcDb9Fmf3AAAAAElFTkSuQmCC", "w": 48, "h": 48, "frames": 4, "fps": 8}, "death": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABY0lEQVR4nO3cvU3DQBiA4QNRpohEQcMIrqjZgAaJLdiACdggWyBRMgA1VdZAckEPtRMix87Zzt33PJ2V+EeKXt/5EiUlAAAAAACgVhe5D9g0zW/fe7bbbfbzwhhXUxz06/P94Gt3949TnDIbAccySQClE3AcAqiQgI8nAM7OnAFfZj0aFObkEeC/Iauv0t19zElZSpYp0PN6PXrfTdvmuITRBBybZ4Ak4MgBC6ACAh4fsABY3JIBWwUitNlHgKeXVXc7rVJKt50h7ebhI+yclHmZAg0k4LoIIBgBd80ewNvrT2d707ahl+EYJnfARoCBBFwXAQQj4C4BUJTcAfsegNAEQGgCILQszwBL/6AKxjo5gBpWEAQcV/hVIAHHVvyHT9mO+ReIPjXcxGARQ8q5nuwqDvte4JwEEukZQMDsiRRA6QQ8AQEwl7MMeEgA1d8NiCfSCCBg9kQKoHQCBgAAAIBR/gCny4K5hs/ufwAAAABJRU5ErkJggg==", "w": 48, "h": 48, "frames": 4, "fps": 8}}, "Mage": {"idle": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABX0lEQVR4nO3avVHDQBAG0IOhAwISl6AhIKYDCMjJ6IAGCGiADsjICQgogJiAURvUYAdE8uCRJZ10kva9TGPrx59vR7cnpQQAAAAAAKzVSe4DVlW1bftOXdfZz8sf+XdzNsZBv7/eD352dX03ximzWcMAkv/xRimApVvyAFqDKfM/zXo0WBgFQGgKgNAG9wD/NS1t87T9febeVM6Z/IcZ/MOrqtreXj713v/j57noH3DMqkOb0tcv//7XbxUopTR0ADFMyfz1AISmAAhNARDa5D3A4/3r3vYmpbRpNEIXN59hVyXGJv8mTXBHBlBZufM3BSK0ye8AL28Pje3S69DRyL/JFKgjA6is3PmbAhGaAiA0BUBoCoDQFAChZVkF8kZkWfLvL/zyXen30aOTPwDA5LrMnc5Hu4rDfgucc67kP4JI7wIZQGXNMn/PAQhNARBalymQ23lZ8gcAAAAAAOhgB1B3gUXAHhfdAAAAAElFTkSuQmCC", "w": 48, "h": 48, "frames": 4, "fps": 6}, "attack": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABLklEQVR4nO3aIVLDQBQG4IXpDRCYHiFTgeYGIPA4bsAFEL0AN8DhEQgOgEYwuQZnANFWMbSZ5CVd8r7PVLTdzS/+SXY3pQAAAAAAAHN1EjVQ0zTfh37Ttm3YfGOQoQ5TZlhEDLLz8f7y53cXlzeRU41GhjpMleE0bCT4hxSA1BSA1BSA1HqvpLus1A859m6EDBuZMwzaBbpePfT+7+vnesjUYWTIncEjEKkpAKmFHoR1cX/7tP1cllKWe5/9zq/eqjyxlKEOERncAUhNAUht8kegx+e7Uspm5X7s7be+ZKhDRAZ3AFJTAFJTAFJTAFJTAFJTAFJTAFJTAFIbdBBWy6u0Q8hQhzlkAAAA6tflDbqz0a/it6/g8WToZ/YZbIOSmgKQmgIAAAAAAAAAzM0PeRtu6rI5lg4AAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 8}, "death": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABZElEQVR4nO3cvU3DQBiAYYPYgIImI1gU1GwABT0dG7AARRZgAzp6ihQMQE0RZQ1mgNoJkWPn7Mvd9zydlfhHil7f+RKlaQAAAAAAgFqdpT5g27a/fe/ZbDbJzwtjXExx0O+vj72v3dw+THHKZAQcyyQBlE7AcQigQgI+nAA4OXMGfJ70aFCYo0eA/4asvkq39zEnJZckU6D765fR+67WyxSXMJqAY/MM0Ag4csACqICAxwcsALLLGbBVIEKbfQR4fnzb2l40TbPoDGlXd59h56TMyxRoIAHXRQDBCLhr9gBe358626v1MvQyHMOkDtgIMJCA6yKAYATcJQCKkjpg3wMQmgAITQCEluQZIPcPqmCsowOoYQVBwHGFXwUScGzFf/iU7ZB/gehTw00MshhSzuVkV7HfT4ZzEkikZwABsyNSAKUT8AQEwFxOMuAhAVR/NyCeSCOAgNkRKYDSCRgAAAAARvkDgeqB21z1iNgAAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 8}}};
+const SPR = {"Knight": {"idle": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABc0lEQVR4nO3bP1LCQBQH4Oh4A6+RytojUFhZU3sCKgsrTmBNTWWRI1hbcQ3PgIWj46AM7mbJJnnfVzHDnyw/3s7uS0LTAAAAAAAAc3VR+gNXq6f9qdes14/Fj8sn+ae5qj2AsVFAdQ2d/2WpD4IpKr4CdN22eXt9Ofr8ze1d6UPyg/zT2AIdUEB1DZ2/LRCh9V4B2rb91bScmqWH79ntdprKTPLvp/cXb9t2v1w+ZL9/s3mu+gP8VUCpao9f/vnj1wM0TdO3gOinZv56AEJLXgFKLFnkk39ZWVugxeL++3HXbYsNZghzKCD5lxOyB5hyAc3BmPLXAxCaCUBoJgChmQCEZgIQWtZZoNqde3TyLyd5AhzedzG287r/MeUCkn9Z4a4DzKGApmxs+esBCK3ICuCOyLrkny/sHyG+1L4fPTr5AwAMLmXvdH22URz3XuGYYyX/M4h0HUAB1TXK/F0HIDQTgNBStkCW87rkDwAAAAAAkOADPd6I93oREtwAAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 6}, "attack": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABWElEQVR4nO3bP04CQRQH4NF4A69BLKwo9ggUVtbUnoDKwooTWFNTWewRtrbiGp5BCxIlGsP+GWB23/c1kMDO8Cte9r3ZkBIAAAAAADBVV7kWWq1ePo99Z71+zrbfKchQhnNmuM6xCIyVAiC0m1wL1fU2vTdv/35+Xz3k2upkZCjDOTO4AxCaAiC03pP0bDY7Oqkfs9vtLnoaIcNe5AyDZoDl8qn3tZvN65Cts5EhdgYtEKEpAEJr3QLl6NNSSqmqqsPXVmvO53dZelQZfsiw12kGWCwev9/X9bbLpcWQoQylZNACEVq2J8FtNU2TUtpP7pc+futLhjLkyOAOQGgKgNAUAKEpAELrNASP9cjtkAxlKCVD6wL4PWXnephxTjKUoaQMWiBCUwCE5v8AA8kw3BQyAAAA49BmcLg9+a/46yPzejL0M/kMjkEJTQEQmgIAAAAAAAAAmJovh3WlcRRl3WcAAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 8}, "death": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABb0lEQVR4nO3aMVLCQBiA0eh4A69BZe0RKKysqT0BlQUVJ7CmprLIEaytuIZn0AqHARnMZskm+79XMQNhd2C+7AbSNAAAAAAAQK1ucr/hcrn6vvSa9fo1+7iQ4q70BMZGwLEIoDIC7iZ7AG27bT4/3s8+//D4lHtIKjJ0wFaAIwKORQCVEXA3vQOYzWYnS9alD/n4mN1uZ09K0zTDB5xlBVgsXpKP3WzeckwhmYBjswVqBBw5YAFUQMDpAXcO4K8JQx8lA05aAebz59/HbbvtNYGhCZhDIbdAAmYvZABTJ+B8BMDgxhTwbdHRoTABEJoACC3pGqD0vg1y6RzA8b9uY7uq/w8BsxfuVyABcyhcAFMn4LyyBFD6hiqmY2wB9w6ghltpBRxX+C2QgGOb/JfPtOXYAtVwEoMiupRzf7VZnPdVYEwCiXQNIGBORApg6gR8BQJgKKMMuEsA1Z8NiCfSCiBgTkQKYOoEDAAAAABJfgDtH4lZ5T5CpwAAAABJRU5ErkJggg==", "w": 48, "h": 48, "frames": 4, "fps": 8}}, "Archer": {"idle": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABkElEQVR4nO3aMU7DMBQG4AfiAEgwMDEzRB2YOQID4hgcjBExcARmpg7MTAwgcYMyZchQtW6cOo6/b2urOu2f92rHTQQAAAAAy3eSa6Cu6zap71mv19mO3zr5H+Ys52ApgR5ywqa0hAKSf7qsDRCx3xeZW+H0ai6gnvzTZG+AiIiP99etr93ePUxxyGxqLqCe/Pc3SQPUruYCWoJj5n+adTSoTNYZoJ++dnXpXNfPtZN/uuxr2a7rNrumsDmuoZewCxQh/1SjB8jxazKnE1JbAcl/nCwNcHV/fvD7v9/+ip6A2gtI/uPytwsUEWMLiHFK5m8XiKZpAJqmAWja0a8BHr9+hk+sImJ1M7gQenr+nM2uxNLIf8hFcCIFVFbu/C2BaNrRZ4CX68vB49L70K2R/5AlUCIFVFbu/C2BaJoGoGkagKZpAJqmAWhall0gd0SWJf/DjW6AJWwB1lxA8gcAIFHK+vFisk+x3W+BY86V/CfQ0r1ACqisWebvfwCapgFoWsoSyHRelvwBAAAAAAAS/AMaRc62tDLZKgAAAABJRU5ErkJggg==", "w": 48, "h": 48, "frames": 4, "fps": 6}, "attack": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABXklEQVR4nO3aIU7EQBQG4IFwABIQKDSiWYHmCAjCMTgYkiA4Ahq1Ao1CQMINFrHBQMh2O7Pt277vU5tsOp2/zZ+205YCAAAAwPwd1A7Qdd1q222Wy2X1fluSIYa9zLDtpIeE3DUZYpgiw1HtAD/6TGbytm4gQwxjZmhWgFJKeXl+/Pe/y6ublrvaGRliGCvDYbORYA8pAKlZBSoyRDFFhmYHoOu61ab7tmgH/DcZYhgzw+BBWixBTX0iZFjLnKFqFejs+njwtu9PXzW7bkaGr2bzqDFVBg/BpNb0PUAft28f6x+LUsriotel7+7+NdQ9qwwxtMjgCkBqCkBqo98CPZyfllLWDy5Trz4MJUMMLTK4ApCaApCaApCaApCaApCaApCaApCaApCaApBa1ZvgKJ/S1pAhhjlkAAAA4uvzCenJzmfx12fj8WQYZvYZLIOSmgKQmgIAAAAAAAAAzM03wFy8XF43Cy0AAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 8}, "death": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABmElEQVR4nO3aPU4DMRBA4QFxACQoqKgprBTUHIECcYwcLCWi4AjUVFtQU1GAxA02VQorRInt8Y7teV+XRPuTxG+92Y0IAAAAAAAAxnemtaIQwpy6zDRNatsHclxorixlQOcEUxMB+6QagMhpA6nVgUPA/qgHICLy8f568LX7h6cam1RDwDasAq4SQO8I2IZFwAQwIAI+nWoAu50/9iG3Nv2iLUsGrBbArsoQwnzsDbQ6BROwP8UB/DcYUgdQC0EQsE/FX2QIYb55vMxe/vvtz3RAaQyGloLoNWCuAhkqDdgSM3AZAhgAAecHQQAwZxnwedHSQOcWnwGev37iJ1YisrqLprT15tP8nBQ+cAqUiIDHQgDOEHBs8QBebq+jx9b3AdAX7YCZARIR8FgIwBkCjhEAuqIdMPcB4BoBwDUCgGsqvwGs/1AF5CoOYIQrCATsl/urQATsm/sAekfAALKlHD2uqu3FYb8G24Qjnk6BCBh7PAXQOwKugACwlCYDTglg+KMB/PE0AxAw9ngKoHcEDAAAAAAAAGTZAoyh3EQIJtuiAAAAAElFTkSuQmCC", "w": 48, "h": 48, "frames": 4, "fps": 8}}, "Healer": {"idle": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABdElEQVR4nO3bO04CURQG4ItxASR21pYTCioLFsESLKitrSisqK0pWAKLsLGxQNZgZ+IOsBGjkUlmhoE7cL6vIYE7j/yck3nelAAAAAAAgHPVa3Nln6uHTdWx/cGs1W0j/yYuc+9AlyigvHLkf9HGSuBUaQBC0wCE1uo1QH8w6xVFsXl9XpaOGY7Gab1eO38+APnXt3cQRVFUunCZL99Kf7u96XXmDzm1ApL/flo5AlzfzdtYTRa7Cmg4Gv8bty2g788/y+QuIPk3z99t0HTaBXQOcuZ/tAaYLl9SSilN0tPPd/N0n94Xk2PtQmjy380RoCIFlNeh8ncblNA0AKFpAELTAISmAQhNAxCaBiA0DUBoGoDQNAChaQBCa+VdoFrvY9wNmi1HKfk315mJELlUnVCyNf1VQI+LVUopdWqCzKmRPwDA0dU5d7o62F6U+8iwza6S/wFEmhGmgPLqZP6eAxCaBiC0OqdADud5yR8AAAAAAKCGL/OxfgnKmZBQAAAAAElFTkSuQmCC", "w": 48, "h": 48, "frames": 4, "fps": 6}, "attack": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABL0lEQVR4nO3bIU7EQBgG0FnCAUhwaORkBQrBITjCitVoFBqNruAIPQQGg4CeAUfCDRZBFkM2Ke10d+j/nmw7035pvjTTtCkBAAAAAABztSgxyefr7abvsSfL+yLnLE2GOuw7w9HYCeA/UwBCUwBCUwBCK7YQyjlvXp7anfsvrq5T13VVLry2ZKjDPjMMniTn3Gu13rRvO/ddni8OeiNk+BY5w/GQQVtnq2bM8CrIUIdDZbAGILRRT4A+7trnlFJK6/Tws61JN+n9cT31qYuRoQ5TZPAEIDQFIDQFIDQFIDQFIDQFIDQFIDQFIDQFIDQFIDQFIDQFILRRH8P96SOk1XLYuInJUIc5ZAAAAOrX50fi08mv4rePwvPJMMzsM3gNSmgKQGgKAAAAAAAAADA3X1XdbZ0QGMbOAAAAAElFTkSuQmCC", "w": 48, "h": 48, "frames": 4, "fps": 8}, "death": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABe0lEQVR4nO3boU7DQBzH8X8JD7AEh0ZeKqYQe4gp9MT0FAI1gZpGV+wR+hAYDGL0GXAke4NhCBnpRnbtXXvt7/sxS5b2eubbS3OtGQAAAAAAAAAAGKss5GD73dPh0mMn+SbotYEmrvueQEoIWA8BjAgB+yMAJKOPgK9CDAIMVdAVYJJvMufc4f21PHvMdDa3qqpYfpGE1gE452rL1nQ2rx1XlB/Hv3/Oub/LkgiCgPUEWQFuF0WIYXpBwNp4CDYCVg64swDW5ZuZmS3t5fe/wlb2uV12NYXRIuDmAbMCXIiA4+kzYAIQQcCnEQAGIVbAbIRBGgFAGgFAGgFAGgFAGgFAGgFAGgFAGgFAWpCdYK/duEXe7DwggtYB+L6a+vBYtb1kcASsS/5dIALWlsSHENB16nuA/6yPAn7e7szM/yYG4IdPOTfRZnHeVw/XhBClZwACRo1SAENHwBEQALqSZMA+AYz+bgA9SisAAaNGKYChI2AAAAAAAACgkW8MzI3zLdETQwAAAABJRU5ErkJggg==", "w": 48, "h": 48, "frames": 4, "fps": 8}}, "Assassin": {"idle": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABRUlEQVR4nO3bP07DMBQH4IAysXKFDh0shs4cgsNwDA7DIZg7oAwdegVWBpYyIBakKjh26qTv+9amtvXTe43zp10HAAAAAABcq5vaA6aUTmPHDMNQfV5+yD9PP8eg+7fXs5/tHp/mmLKaaygg+f9f8UDb7W50wWMOh/1iCiqldBoroCU1gPzLhG8A64+9/upboJe78WOeP2vPyi/555nlGmDNFFBbl87/tt5QsD7VzwB+HduSfx5boD8UUFuXzt8WiNA0AKFpAELTAIRWfBHc91/dZvMw+fvH43vpEkKTf5nwd4EUUFut87cFIjQNQGgagNA0AKFpAELTAISmAQitynMA98Lbkv90xQ2wpD+IT7XmApI/AACZcvaP97Ot4ryPBnMulfxnEOltUAXU1iLz9xyA0DQAoeVsgZzO25I/AAAAAABAhm8zwW75N+33pgAAAABJRU5ErkJggg==", "w": 48, "h": 48, "frames": 4, "fps": 6}, "attack": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABOUlEQVR4nO3aIVLDQBgG0MBEYblCRUUGEc0REByGY3CEHoJDoCM6ERW5AhaBAQEIhmkT0k2y5H/PVDTdzSe+7nabogAAAAAAANbqItVAVVW9913Ttm2y+aYgQx7mzFCmGORb8/x09L369j7lVJORIQ9zZRjdou227m1pn8OhWfSbSIZPkTNcnjsx/GfJtkCPV/3XPLymmm0aMuRhzgxWAEJTAEJLtgXKfVkdQoY8zJnBCkBoCkBoSf8IG+LHL/z69PnvXbPs+fQxMuQhRQYrAKEpAKGN3gKV5Vux2dz8+XO7r9eu2y/+UJYMMlgBCE0BCE0BCE0BCE0BCE0BCE0BCE0BCO2sZ4G6bp/qPhYjQx7WkAEAAMjfkCforie/i99eEo8nwzirz+AYlNAUgNAUAAAAAAAAAGBtPgBB93QEAByvNwAAAABJRU5ErkJggg==", "w": 48, "h": 48, "frames": 4, "fps": 8}, "death": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABZElEQVR4nO3bvW3CQBiA4UuEUqTNChQUFgVVigyRikkyRobJEKkpIgoKVkibIkIiPYhY9p1/v+dpsX0W+PX5R6QEAAAAAADM1V3pDVZVda5bZr/fFx8X2lh0sdHd58fNzzYvr10MWYyAY8n+IVerTe0BU+dw2I3mgKqq6lwX8JgDEHAzncwAU3IZ8OmU0vp5+88aD1frjCnglMzATRQP4P2xfpm3n9KjxiXgPOFngEsC7tfQAQtgZgTcTPEAfLnk6DtgM8AFAccigJkRcDMCYFT6Dvi+3+FgXARAaNmXQIvFb1ou163XPx6/cncBWgt/DyDg2MIHMHUCziMABjV0wG6CCU0AhCYAQhMAoQmA0Io8BYr+KI3pyg5gDn+wFnBc4d8DCDi28AFMnYCB1pqcPZ4624vbvgcYk0AiXQIJmCuRApg6AXdAAPRllAE3CWD2ZwPiiTQDCJgrkQKYOgEDAAAAQCt/jw5zNbmulj8AAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 8}}, "Mage": {"idle": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABe0lEQVR4nO3boVICQRgH8NUxWe0+wQ2BZCAZTAaSweSTEHgOg4lMIBlMZgPDE9itVgzojA4i3t3CAt/vFxn29uY/38ft3R4pAQAAAHD4jnId6PZqOK87ZvQ4yDZ/dPJv5qT0CewKBVRWqfyP2x4A9lm2K8BXN1ZVNX95Hq/8XrfXT7PZzC9nZvJvxhLokwIqq1T+lkCEpgEITQMQWut7gKqqlh5fdXv9tWPuB52lzy9uRtbWNcm/nSw3wdedQYNR4xxTt3YIBST/hSb5b/0p0Ht63faUa+1zAdUl/588Bq1pFwsoktz5uwkmtGJXgNG4m07TeZpMhzaWCpD/giVQQwqorFz5WwIRmgYgNA1AaBqA0DQAoWkAQtMAhKYBCE0DEFqWneDJdPjv71527hqNYzX5Nxd+C/+399H/8r2AnqYPKaXkVYgW5A8AsHV11k5nGzuL1d4KzLmr5L8Bkf4PoIDK2sn87QMQmgYgtDpLIJfzsuQPAAAAAABQwwetY5FCUxWeHAAAAABJRU5ErkJggg==", "w": 48, "h": 48, "frames": 4, "fps": 6}, "attack": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABRklEQVR4nO3brU4DQRQG0AtBYfE8waaiCoFCoBAoBIonqehzIKqqK1AIFBrR9AnwWGxRJYGmCfvT3aH3HNV0MzP7iS/T2U0jAAAAADh8R20nuL+eruuOmT9PWq/bJRnKMESG4zaD4b9TAFLrbAusqmr99rrYeX18eRur1aqoLfc3GcrQZwY7AKkpAKkpAKkpAKk1PkhUVVX7mW1ExONktPXdxd18kEOZDD9lzHDSZOGNm9GkwahFmyU7J0MZhsrQqgB1fMZ7X0vtjQxl6DKDMwCpKQCp9fYTaGO+GMdpnMfTclr8G8ldZChDFxnsAKSmAKSmAKSmAKSmAKSmAKSmAKSmAKSmAKSmAKTW2/8BrkYP359flrOIiMFfwcswiwgZAACAPP5ycDjb+11s++h4PhmaOfgMHoOSmgKQmgIAAAAAAAAAHJovEj+DECzut9EAAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 8}, "death": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABi0lEQVR4nO3boVLDMACH8cChsHieIFdRhZhCoBBTCBQPga7ocyBQ1RVTCBQa0csT4LHYITbu2JWxJU2btv/vJ3dN09vd1yzrZgwAAAAAAADm7yTWie5vyrXvmOqliDY/EOIs9QWMBQFrIoCZIOAw0QL4eTOttev3t3rvcfliaZxz8m88dqUKmBVgi4A1EcBMEHAYAsAopAr4NNaJgCnqvAJYa1ubl3yxPDjmqchar1/dVSzNGFSUj0C3WREwqo4xdWcErG3wPcCX+Rh6yoMIeEMxYDbBngg4rtQBE4AYAt6VLICqzs25uTSrpuR7aRwtdsCsAIEIeB4IQBQBbxAAJilWwDwJhjQCgDQCgDQCgDQCgDQCgDQCgLQozwFWTXn0sdfZQ9A4oA+dA/B9COHcY9cpoyNgXfJPgglYm+xvQDAOf/0f4D+/A35tno0x/jcxAFs+5Vz0dhX7fSaYE0KU9gAEjBalAKaOgHtAABjKKAP2CWD2dwPoUVoBCBgtSgFMHQEDAAAAAAAAQb4BekuZYWPCQ00AAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 8}}, "Goblin": {"idle": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABTElEQVR4nO3csU3DQBQG4IDYgDWsFNQMQZ2KIRgjQ1ClZghqCstrMEMokCUERLbP59zZ7/vaJD7n+f3yneLLbgcAAAAAAGzVTe4DNk1zHnpP13XZx+Wb+k9zt8RBP97fLr728Pi0xJDZbKGB1H+85AAcXg9/TvT0fKq6McZaQwOpfx6L3AHWYMsNtAa11P/22gNCTQSA0LJOgfoFzNA87fdCp/ZF5Vqo/3Szv3jTNOf9yz758+2xLXIB/puDtsc26VglG0j959U/7CK4X3D9bKCURkq9aNHVUn9rAEITAEITAEITAEITAEITAEITAEITAEITAEITAEITAEITAEITAELL8jSoJyLLUv90YTdC9Mb8C8GQyBtK5lJ/AICrmzJ3ul/sLC77LDBmrdR/AZH2BGugsqqsv98BCE0ACG3KFMjtvCz1BwAAAAAAmOALAsJ1A1rSubEAAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 6}, "attack": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABRklEQVR4nO3aMU4CQRQG4NF4A3srCosNBbVHsKCm8hAewoJDWFFzCGuKDYW1vWfAgpAYiILrsLzs+76GApjdn+Rnd2a2FAAAAAAAYKiuag3UNM3m2GfW63W1452DDDH0meGmxiA7q7flj+9NHqY1D3U2MsTQV4Y/F2D2Ojto5+JpEfofZZ8MMUTIcN3nwSAaBSA1BSC1KpPg3az92ORkf3YfaTVChhj6ztA5eNM0m/HzuOvXSztvL/7DyyCDWyBSUwBSq7oRdoq75Wr7OirlcXT/647fy/I9zL3pdzLEUCODKwCpKQCp9X4L9DGdlFJirD50JUMMNTK4ApCaApCaApCaApCaApCaApCaApCaApDavzbC2nlb6zwuRoYYhpABAACI75Qn6G7PfhaHPiuPJ0M3g89gGZTUFIDUFAAAAAAAAABgaL4Ax72cYJ6NTzQAAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 8}, "death": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABSUlEQVR4nO3csU3DQACG0QOxAWtYKagZgjoVQzAGQ1ClZghqiihrMEOookhEUbBzjn3+32tcJPZZij+fI51cCgAAAAAAsFR3tQ/Ydd3+0nd2u131cWGIhzEO+v31efazp+eXMYasRsBZBgew/lifXCib180iLgwB5xhlBmiBgOfp1gHHBtA6AdchACYxl4CrBnCYvi5V+nea80zKVAYHcKi167r96m1VSinlsO1j+74degrVCThP7COQgI+SA44NoHUCPromYAEwibkEfH/V3tA4ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEq7IWaE4LqqCPqwNYwlJaAeeKXw0q4GzN//i07T9vgbhkCTcxmESfch5HO4vzfiYYkyBJ/wEEzImkAFon4BEIgFuZZcB9Alj83YA8STOAgDmRFEDrBAwAAAAAg/wCx6B3u5RMZooAAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 8}}, "Skeleton": {"idle": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABHElEQVR4nO3bwXGDMBAFUDmTDtyGSqAISqUISqCN1OAcMrlk4sEgyQL2vauNJK/1xxIWKQEAAAAAAFd1q91gzvmx9p5lWar3yw/13+azRaPzPD99bRiGFl1Wc4UJpP6vaxKAszvzBLqCd9b/o2prcDICQGgCQGjFe4D/Ni1r67S/1xx9U3lk6l+m+IPnnB/TNO2+fhzHrl/AK3cd1vQev/rvH7+7QCml0glEmZ71twcgNAEgNAEgNAEgNAEgNAEgNAEgNAEgNAEgNAEgNAEgNAEgNAEgtCqnQZ2I7Ev99wv7IMSv3ufRo1N/AIC327J2ujcbxXNfHfo8KvVvINIzwSZQX4esv/8BCE0ACG3LEsjPeV/qDwAAAAAAsME372lUbRrc/uMAAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 6}, "attack": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABD0lEQVR4nO3awVGEMAAF0NWxA1vgSAkUkVIpghJowxr0oJ4cZ5GEJfLfu+6S8A9/EgK3GwAAAAAAcFVPrQYax/H93n/WdW023xFk6MMjM7y0GOTbsiy//jZNU8upDiNDHx6V4bnZSPAPKQDRFIBoCkC03U/SW57U7zn7NEKGT8kZqk6B5nnefW0ppWbqZmQoze6jxlkZbIGIpgBEa/oi7C++lrxNe79hGLp8cylDH2oyWAGIpgBEO20LVEo5/fitlgx9qMlgBSCaAhBNAYimAERTAKIpANEUgGgKQLSqF2G9fEpbQ4Y+XCEDAADQvy1f0L0efhc/vTUeT4Z9Lp/BMSjRFIBoCgAAAAAAAABwNR8tr1uihLy02QAAAABJRU5ErkJggg==", "w": 48, "h": 48, "frames": 4, "fps": 8}, "death": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABG0lEQVR4nO3c0W2DMABFUVp1g67BCAzBqAzBCKzRGdr/JhEJMXHsd85vgo0UXQyRxTAAAAAAAAC9+ig94DiOv3vf2bat+LxwxNcZg67revOzaZrOmLIYAWc5JYDWCTiHADok4PsJgLfzyoA/i44GjXl6Bbi2ZO1V+v8Y96TUUuQWaFmWw8fO81ziFA4TcDbPAIOAkwMWQAcEfDxgAVBdzYD9C0Q0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEK7IXqPaGKjjq6QB62Eor4Fzxu0EFnK35H5+23fMWiD09XMSgikfK+T7tLG77qTAnQZKeAQTMhaQAWifgEwiAV3nLgB8JoPurAXmSVgABcyEpgNYJGAAAAAAO+QP9gVPR96C4mAAAAABJRU5ErkJggg==", "w": 48, "h": 48, "frames": 4, "fps": 8}}};
 (function(){
-  const diag = document.getElementById('diag');
-  function dmsg(m){ diag.textContent=m; }
+  const diag=document.getElementById('diag'); const log=document.getElementById('blog');
+  const dmsg=(t)=>diag.textContent=t;
+  const blog=(t,c)=>{const p=document.createElement('div'); if(c) p.className=c; p.textContent=t; log.appendChild(p); log.scrollTop=log.scrollHeight;};
 
-  const state = {
-    gold: 10, level: 3, cap: 3, benchCap: 5, levelCost: 4,
-    rowF: [null,null,null,null],
-    rowB: [null,null,null,null],
-    bench: [null,null,null,null,null],
-    relics: ['Holy Shield'],
-    wave: 1, locked: false, selected: null
-  };
-  const CLASSES = {
-    K:{name:'Knight', cls:'Knight', hp:100, atk:10, spd:1.8},
-    A:{name:'Archer', cls:'Archer', hp:60, atk:15, spd:1.4},
-    H:{name:'Healer', cls:'Healer', hp:50, atk:5,  spd:2.0, heal:15},
+  const state={gold:10, level:3, cap:3, benchCap:5, levelCost:4,
+    rowF:[null,null,null,null], rowB:[null,null,null,null], bench:[null,null,null,null,null],
+    wave:1, locked:false, selected:null};
+
+  const CLASSES={
+    K:{name:'Knight', cls:'Knight', hp:110, atk:10, spd:1.9},
+    A:{name:'Archer', cls:'Archer', hp:60, atk:15, spd:1.5},
+    H:{name:'Healer', cls:'Healer', hp:55, atk:5, spd:2.1, heal:15},
     S:{name:'Assassin', cls:'Assassin', hp:55, atk:18, spd:1.6, backstab:true},
-    M:{name:'Mage', cls:'Mage', hp:55, atk:14, spd:1.6, splash:true}
+    M:{name:'Mage', cls:'Mage', hp:55, atk:14, spd:1.6, splash:true},
   };
-  const ENEMIES = [
-    {name:'Goblins', count:3, hp:40, atk:8, spd:1.8},
-    {name:'Wolves', count:4, hp:35, atk:6, spd:1.4},
-    {name:'Slime', count:2, hp:80, atk:12, spd:2.0, poison:5},
-    {name:'Ogre Chief', count:1, hp:200, atk:20, spd:2.2}
+  const ENEMIES=[
+    {name:'Goblins', sprite:'Goblin', count:3, hp:40, atk:8, spd:1.8},
+    {name:'Wolves', sprite:'Goblin', count:4, hp:35, atk:6, spd:1.4},
+    {name:'Skeletons', sprite:'Skeleton', count:3, hp:45, atk:10, spd:1.7},
+    {name:'Ogre Chief', sprite:'Goblin', count:1, hp:220, atk:22, spd:2.2}
   ];
-  function mulberry32(a){return function(){var t=a+=0x6D2B79F5;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296;}}
-  const rng = mulberry32(1337);
-  function rand(){ return rng(); }
-  function choice(arr){ return arr[Math.floor(rand()*arr.length)] }
-  function makeUnit(code){ const b=CLASSES[code]; return {code, name:b.name, cls:b.cls, maxhp:b.hp, hp:b.hp, atk:b.atk, spd:b.spd, heal:b.heal||0, backstab:!!b.backstab, splash:!!b.splash, tier:1}; }
-  function powerUp(u){ u.tier+=1; u.maxhp=Math.round(u.maxhp*1.5); u.hp=u.maxhp; u.atk=Math.round(u.atk*1.5); }
-  function icon(u){ return `<div class="badge">${u.name}</div><div class="small" style="color:#f2f2f2">T${u.tier}</div>`; }
 
-  function boardCount(){ return [...state.rowF, ...state.rowB].filter(Boolean).length; }
-  function getAt(area, idx){ return area==='rowF'?state.rowF[idx] : area==='rowB'?state.rowB[idx] : state.bench[idx]; }
-  function setAt(area, idx, val){ if(area==='rowF') state.rowF[idx]=val; else if(area==='rowB') state.rowB[idx]=val; else state.bench[idx]=val; }
+  function mulberry32(a){return function(){var t=a+=0x6D2B79F5;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296;}}
+  const rng=mulberry32(1337); const rand=()=>rng(); const choice=(a)=>a[Math.floor(rand()*a.length)];
+  function makeUnit(code){const b=CLASSES[code]; return {code, name:b.name, cls:b.cls, maxhp:b.hp, hp:b.hp, atk:b.atk, spd:b.spd, heal:b.heal||0, backstab:!!b.backstab, splash:!!b.splash, tier:1};}
+  function powerUp(u){u.tier+=1; u.maxhp=Math.round(u.maxhp*1.5); u.hp=u.maxhp; u.atk=Math.round(u.atk*1.5);}
+  function icon(u){return `<div class="badge">${u.name}</div><div class="small" style="color:#f2f2f2">T${u.tier}</div>`;}
+  function boardCount(){return [...state.rowF,...state.rowB].filter(Boolean).length;}
+  function getAt(area,i){return area==='rowF'?state.rowF[i]:area==='rowB'?state.rowB[i]:state.bench[i];}
+  function setAt(area,i,val){if(area==='rowF') state.rowF[i]=val; else if(area==='rowB') state.rowB[i]=val; else state.bench[i]=val;}
 
   function slot(area,i,u){
-    const d=document.createElement('div'); d.className='slot'; if(state.selected && state.selected.area===area && state.selected.idx===i) d.classList.add('sel');
-    d.innerHTML = u?icon(u):'';
-    if(u){
-      const bar=document.createElement('div'); bar.className='hpbar'; const fill=document.createElement('div'); fill.className='hpfill'; fill.style.width=Math.max(0,Math.round(100*u.hp/u.maxhp))+'%'; bar.appendChild(fill); d.appendChild(bar);
-    }
+    const d=document.createElement('div'); d.className='slot'; if(state.selected&&state.selected.area===area&&state.selected.idx===i) d.classList.add('sel');
+    d.innerHTML=u?icon(u):'';
+    if(u){const bar=document.createElement('div'); bar.className='hpbar'; const fill=document.createElement('div'); fill.className='hpfill'; fill.style.width=Math.max(0,Math.round(100*u.hp/u.maxhp))+'%'; bar.appendChild(fill); d.appendChild(bar);}
     d.onclick=()=>{
-      if(!state.selected){ const u=getAt(area,i); if(!u){ dmsg('Empty slot'); return; } state.selected={area,i}; renderPrep(); return; }
-      if(state.selected.area===area && state.selected.idx===i){ state.selected=null; renderPrep(); return; }
-      const from=getAt(state.selected.area,state.selected.idx), to=getAt(area,i); if(!from){ state.selected=null; renderPrep(); return; }
-      const intoBoard = (state.selected.area==='bench') && (area!=='bench') && !to;
-      if(intoBoard && boardCount()>=state.cap){ dmsg('Board full. Level up.'); state.selected=null; renderPrep(); return; }
+      if(!state.selected){const u=getAt(area,i); if(!u){dmsg('Empty slot'); return;} state.selected={area,idx:i}; renderPrep(); return;}
+      if(state.selected.area===area&&state.selected.idx===i){state.selected=null; renderPrep(); return;}
+      const from=getAt(state.selected.area,state.selected.idx), to=getAt(area,i); if(!from){state.selected=null; renderPrep(); return;}
+      const intoBoard=(state.selected.area==='bench')&&(area!=='bench')&&!to;
+      if(intoBoard && boardCount()>=state.cap){dmsg('Board full. Level up.'); state.selected=null; renderPrep(); return;}
       setAt(state.selected.area,state.selected.idx,to); setAt(area,i,from); state.selected=null; renderPrep();
     };
     return d;
@@ -148,21 +141,19 @@ const SPRITES = {"Knight": {"idle": {"src": "data:image/png;base64,iVBORw0KGgoAA
     document.getElementById('gold').textContent=state.gold;
     document.getElementById('lvl').textContent=state.level;
     document.getElementById('cap').textContent=state.cap;
-    const base = ENEMIES[(state.wave-1)%ENEMIES.length];
-    document.getElementById('enemyPrev').textContent = `${base.name} ×${base.count}  HP ${base.hp}  ATK ${base.atk}` + (base.poison?`  Poison ${base.poison}`:'');
+    const base=ENEMIES[(state.wave-1)%ENEMIES.length];
+    document.getElementById('enemyPrev').textContent=`${base.name} ×${base.count}  HP ${base.hp}  ATK ${base.atk}`;
   }
 
   function addOrMerge(u){
     const all=[...state.rowF,...state.rowB,...state.bench].filter(Boolean);
     const same=all.filter(x=>x.name===u.name && x.tier===u.tier);
     if(same.length>=2){
-      let c=0
-      function rem(list){ for(let i=0;i<list.length;i++){ if(list[i] && list[i].name===u.name && list[i].tier===u.tier && c<2){ list[i]=null; c++; } } }
+      let c=0; function rem(list){for(let i=0;i<list.length;i++){if(list[i]&&list[i].name===u.name&&list[i].tier===u.tier&&c<2){list[i]=null;c++;}}}
       rem(state.bench); rem(state.rowB); rem(state.rowF);
       const up=makeUnit(u.code); up.tier=u.tier; up.maxhp=u.maxhp; up.hp=u.maxhp; up.atk=u.atk; powerUp(up);
-      const s=state.bench.findIndex(x=>!x); if(s!==-1) state.bench[s]=up;
-      dmsg(`Merge! ${u.name} → Tier ${up.tier}`);
-    }else{
+      const s=state.bench.findIndex(x=>!x); if(s!==-1) state.bench[s]=up; dmsg(`Merge! ${u.name} → Tier ${up.tier}`);
+    } else {
       const i=state.bench.findIndex(x=>!x); if(i!==-1) state.bench[i]=u;
     }
   }
@@ -171,72 +162,51 @@ const SPRITES = {"Knight": {"idle": {"src": "data:image/png;base64,iVBORw0KGgoAA
     if(state.locked) return;
     const box=document.getElementById('shop'); box.innerHTML='';
     const codes=Object.keys(CLASSES);
-    [0,1,2,3].forEach(()=>{
+    for(let k=0;k<4;k++){
       const code=codes[Math.floor(rand()*codes.length)]; const u=makeUnit(code);
       const btn=document.createElement('button'); btn.className='btn'; btn.innerHTML=`${u.name}<div class="small subtle">class: ${u.cls}</div>`;
-      btn.onclick=()=>{ if(state.gold<2){ dmsg('Need 3g'); return; } const i=state.bench.findIndex(x=>!x); if(i===-1){ dmsg('Bench full'); return; } state.gold-=3; addOrMerge(u); renderPrep(); };
+      btn.onclick=()=>{ if(state.gold<3){ dmsg('Need 3g'); return; } const i=state.bench.findIndex(x=>!x); if(i===-1){ dmsg('Bench full'); return; } state.gold-=3; addOrMerge(u); renderPrep(); };
       box.appendChild(btn);
-    });
+    }
   }
 
-  // Battle
-  const SPEEDS=[0.5,0.75,1.0]; let speedIdx=0;
-  const PACE=2.3;
-  const blogEl=document.getElementById('blog');
-  function blog(t, cls){ const p=document.createElement('div'); if(cls) p.className=cls; p.textContent=t; blogEl.appendChild(p); blogEl.scrollTop=blogEl.scrollHeight; }
-  function clearBlog(){ blogEl.textContent=''; }
-
-  function setBGFrame(el, conf, frame){
-    const x = -conf.w*frame;
-    el.style.backgroundImage = 'url('+conf.src+')';
-    el.style.backgroundSize = 'auto 64px';
-    el.style.backgroundPosition = x+'px 0px';
-  }
-
-  function SpritePlayer(name, action='idle'){
-    const conf=SPRITES[name][action];
-    const s={name, action, conf, frame:0, t:0};
-    return s;
-  }
-  function stepAnim(sp, dt){
-    sp.t += dt;
-    const dur=1/sp.conf.fps;
-    if(sp.t >= dur){ sp.t -= dur; sp.frame=(sp.frame+1)%sp.conf.frames; }
-  }
-  function play(sp, action){ if(!SPRITES[sp.name][action]) return; sp.action=action; sp.conf=SPRITES[sp.name][action]; sp.frame=0; sp.t=0; }
+  // --- Battle with sprite players ---
+  const SPEEDS=[0.5,0.75,1.0]; let speedIdx=0; const PACE=2.3;
+  function setBG(el, conf, frame){ el.style.backgroundImage='url('+conf.src+')'; el.style.backgroundSize='auto 64px'; el.style.backgroundPosition=(-conf.w*frame)+'px 0px'; }
+  function SpritePlayer(name, action='idle'){ const conf=SPR[name][action]; return {name,action,conf,frame:0,t:0}; }
+  function stepAnim(sp,dt){ sp.t+=dt; const dur=1/sp.conf.fps; if(sp.t>=dur){ sp.t-=dur; sp.frame=(sp.frame+1)%sp.conf.frames; } }
+  function play(sp, act){ const c=SPR[sp.name][act]; if(!c) return; sp.action=act; sp.conf=c; sp.frame=0; sp.t=0; }
 
   function cell(label,hp,maxhp,cls){
     const c=document.createElement('div'); c.className='cell';
     const spr=document.createElement('div'); spr.className='sprite'; c.appendChild(spr);
     const nm=document.createElement('div'); nm.className='name'; nm.textContent=label; c.appendChild(nm);
     const hb=document.createElement('div'); hb.className='hpbar'; const fill=document.createElement('div'); fill.className='hpfill'; fill.style.width=Math.round(100*hp/maxhp)+'%'; hb.appendChild(fill); c.appendChild(hb);
-    const sp=SpritePlayer(cls,'idle'); setBGFrame(spr, sp.conf, 0);
+    const sp=SpritePlayer(cls,'idle'); setBG(spr, sp.conf, 0);
     return {c,spr,fill,sp};
   }
 
   let battle=null;
   function toBattle(){
-    clearBlog();
+    log.textContent='';
     const party=[];
     for(let i=0;i<4;i++){ const u=state.rowF[i]; if(u) party.push({u:{...u}, next:u.spd*PACE}); }
     for(let i=0;i<4;i++){ const u=state.rowB[i]; if(u) party.push({u:{...u}, next:u.spd*PACE}); }
     if(!party.length){ dmsg('No units on board'); return; }
     party.forEach(p=>p.u.hp=Math.min(p.u.maxhp+5,p.u.hp+5));
     const base=ENEMIES[(state.wave-1)%ENEMIES.length];
-    const mobs=[]; for(let i=0;i<base.count;i++){ const mh=Math.round(base.hp*(1+0.18*(state.wave-1))); mobs.push({name:base.name, hp:mh, maxhp:mh, atk:Math.round(base.atk*(1+0.12*(state.wave-1))), spd:base.spd, next:base.spd*PACE}); }
-    battle={party,mobs,poison:base.poison||0, t:0, dt:0.06, speed:SPEEDS[speedIdx], running:true, result:null};
+    const mobs=[]; for(let i=0;i<base.count;i++){ const mh=Math.round(base.hp*(1+0.18*(state.wave-1))); mobs.push({name:base.name, sprite:base.sprite, hp:mh, maxhp:mh, atk:Math.round(base.atk*(1+0.12*(state.wave-1))), spd:base.spd, next:base.spd*PACE}); }
+    battle={party,mobs, t:0, dt:0.06, speed:SPEEDS[speedIdx], running:true, result:null};
     document.getElementById('bwavenum').textContent=state.wave;
-    renderField();
-    document.getElementById('prep').style.display='none'; document.getElementById('battle').style.display='block';
+    renderField(); document.getElementById('prep').style.display='none'; document.getElementById('battle').style.display='block';
     blog(`▶ Wave ${state.wave}: ${base.name} appear.`,'notice');
     loop();
   }
 
   function renderField(){
-    const eline=document.getElementById('eline'), aline=document.getElementById('aline');
-    eline.innerHTML=''; aline.innerHTML='';
-    for(let i=0;i<4;i++){ const m=battle.mobs[i]; if(m){ const d=cell(battle.mobs[0].name,m.hp,m.maxhp,'Knight'); m._=d; eline.appendChild(d.c);} else { eline.appendChild(Object.assign(document.createElement('div'),{className:'cell'})); } }
-    for(let i=0;i<4;i++){ const p=battle.party[i]; if(p){ const d=cell(p.u.name,p.u.hp,p.u.maxhp,p.u.cls); p._=d; aline.appendChild(d.c);} else { aline.appendChild(Object.assign(document.createElement('div'),{className:'cell'})); } }
+    const el=document.getElementById('eline'); const al=document.getElementById('aline'); el.innerHTML=''; al.innerHTML='';
+    for(let i=0;i<4;i++){ const m=battle.mobs[i]; if(m){ const d=cell(m.name,m.hp,m.maxhp,m.sprite); m._=d; el.appendChild(d.c);} else { el.appendChild(Object.assign(document.createElement('div'),{className:'cell'})); } }
+    for(let i=0;i<4;i++){ const p=battle.party[i]; if(p){ const d=cell(p.u.name,p.u.hp,p.u.maxhp,p.u.cls); p._=d; al.appendChild(d.c);} else { al.appendChild(Object.assign(document.createElement('div'),{className:'cell'})); } }
   }
 
   function pickAlive(arr){ const alive=arr.filter(x=>x.hp>0); return alive.length?alive[Math.floor(rand()*alive.length)]:null; }
@@ -245,29 +215,22 @@ const SPRITES = {"Knight": {"idle": {"src": "data:image/png;base64,iVBORw0KGgoAA
   function loop(){
     if(!battle || !battle.running) return;
     const step=battle.dt*battle.speed; battle.t+=step;
-
-    for(const p of battle.party){ if(p._){ stepAnim(p._.sp, step); setBGFrame(p._.spr, p._.sp.conf, p._.sp.frame); } }
-    for(const m of battle.mobs){ if(m._){ stepAnim(m._.sp, step); setBGFrame(m._.spr, m._.sp.conf, m._.sp.frame); } }
-
-    if(battle.poison && Math.floor(battle.t)%3===0 && Math.abs(battle.t-Math.floor(battle.t))<1e-9){
-      battle.party.forEach(p=>{ if(p.u.hp>0){ p.u.hp-=battle.poison; if(p._) p._.fill.style.width=Math.round(100*p.u.hp/p.u.maxhp)+'%'; blog(`Poison ticks for ${battle.poison}.`); } });
-    }
-
+    // animate
+    for(const p of battle.party){ if(p._){ stepAnim(p._.sp, step); setBG(p._.spr, p._.sp.conf, p._.sp.frame); } }
+    for(const m of battle.mobs){ if(m._){ stepAnim(m._.sp, step); setBG(m._.spr, m._.sp.conf, m._.sp.frame); } }
+    // actions
     for(const p of battle.party){
       if(p.u.hp<=0) continue;
       p.next -= step;
       if(p.next<=0){
         if(p.u.heal){
           const tgt=battle.party.reduce((a,c)=> (c.u.hp>0 && (!a||c.u.hp<a.u.hp))?c:a, null);
-          if(tgt){ const pre=tgt.u.hp; tgt.u.hp=Math.min(tgt.u.maxhp, tgt.u.hp + p.u.heal); if(tgt._) tgt._.fill.style.width=Math.round(100*tgt.u.hp/tgt.u.maxhp)+'%'; blog(`${p.u.name} heals ${tgt.u.name} for ${tgt.u.hp-pre}.`); }
+          if(tgt){ const pre=tgt.u.hp; tgt.u.hp=Math.min(tgt.u.maxhp, tgt.u.hp + p.u.heal); if(tgt._) tgt._.fill.style.width=Math.round(100*tgt.u.hp/tgt.u.maxhp)+'%'; blog(`${p.u.name} heals ${tgt.u.name} for ${tgt.u.hp-pre}.`); play(p._.sp,'attack'); setTimeout(()=>{ if(p._) play(p._.sp,'idle'); }, 380); }
         }else{
           const t=pickAlive(battle.mobs);
-          if(t){ let dmg=p.u.atk; if(p.u.backstab) dmg=Math.round(dmg*1.2);
-            t.hp-=dmg; if(t._) t._.fill.style.width=Math.round(100*t.hp/t.maxhp)+'%'; blog(`${p.u.name} hits ${t.name} for ${dmg}.`);
-            if(p._){ play(p._.sp,'attack'); setTimeout(()=>{ if(p._) play(p._.sp,'idle'); }, 380); }
-          }
+          if(t){ let dmg=p.u.atk; if(p.u.backstab) dmg=Math.round(dmg*1.2); t.hp-=dmg; if(t._) t._.fill.style.width=Math.round(100*t.hp/t.maxhp)+'%'; blog(`${p.u.name} hits ${t.name} for ${dmg}.`); play(p._.sp,'attack'); setTimeout(()=>{ if(p._) play(p._.sp,'idle'); }, 380); }
         }
-        p.next += p.u.spd*PACE;
+        p.next += p.u.spd*2.3;
       }
     }
     for(const m of battle.mobs){
@@ -275,45 +238,33 @@ const SPRITES = {"Knight": {"idle": {"src": "data:image/png;base64,iVBORw0KGgoAA
       m.next -= step;
       if(m.next<=0){
         const tgt = pickAlive(battle.party.map(x=>x.u));
-        if(tgt){ tgt.hp-=m.atk; const wrap=battle.party.find(pp=>pp.u===tgt); if(wrap && wrap._) wrap._.fill.style.width=Math.round(100*wrap.u.hp/wrap.u.maxhp)+'%'; blog(`${m.name} hits ${tgt.name} for ${m.atk}.`);
-          if(m._){ play(m._.sp,'attack'); setTimeout(()=>{ if(m._) play(m._.sp,'idle'); }, 380); }
-        }
-        m.next += m.spd*PACE;
+        if(tgt){ tgt.hp-=m.atk; const wrap=battle.party.find(pp=>pp.u===tgt); if(wrap && wrap._) wrap._.fill.style.width=Math.round(100*wrap.u.hp/wrap.u.maxhp)+'%'; blog(`${m.name} hits ${tgt.name} for ${m.atk}.`); play(m._.sp,'attack'); setTimeout(()=>{ if(m._) play(m._.sp,'idle'); }, 380); }
+        m.next += m.spd*2.3;
       }
     }
-
     battle.mobs=battle.mobs.filter(m=>m.hp>0);
     const partyAlive=battle.party.some(p=>p.u.hp>0), mobsAlive=battle.mobs.length>0;
     if(!partyAlive || !mobsAlive || battle.t>120){ endBattle(!mobsAlive && partyAlive); return; }
     requestAnimationFrame(loop);
   }
 
-  // Buttons
   function wire(){
     document.getElementById('reroll').onclick=()=>{ if(state.gold<2){ dmsg('Not enough gold'); return; } state.gold-=2; state.locked=false; rollShop(); renderPrep(); };
     document.getElementById('lock').onclick=()=>{ state.locked=!state.locked; dmsg(state.locked?'Shop locked':'Shop unlocked'); };
-    document.getElementById('level').onclick=()=>{ if(state.gold<state.levelCost){ dmsg(`Need ${state.levelCost}}g`); return; } state.gold-=state.levelCost; state.level+=1; state.cap=Math.min(6,state.cap+1); state.levelCost+=2; renderPrep(); };
+    document.getElementById('level').onclick=()=>{ if(state.gold<state.levelCost){ dmsg(`Need ${state.levelCost}g`); return; } state.gold-=state.levelCost; state.level+=1; state.cap=Math.min(6,state.cap+1); state.levelCost+=2; renderPrep(); };
     document.getElementById('start').onclick=()=>{ document.getElementById('bcontinue').disabled = true; toBattle(); };
     document.getElementById('spawn').onclick=()=>{ state.rowF=[makeUnit('K'),null,null,null]; state.rowB=[null,makeUnit('A'),null,null]; state.bench=[makeUnit('H'),null,null,null,null]; renderPrep(); };
     document.getElementById('bquit').onclick=()=>{ document.getElementById('battle').style.display='none'; document.getElementById('prep').style.display='block'; };
     document.getElementById('bspeed').onclick=()=>{ speedIdx=(speedIdx+1)%SPEEDS.length; if(battle) battle.speed=SPEEDS[speedIdx]; document.getElementById('bspeed').textContent=SPEEDS[speedIdx]+'x'; };
     document.getElementById('bcontinue').onclick=()=>{
-      const victory = (battle && battle.result==='win');
-      if(victory){ state.wave += 1; state.gold += 5; for(const u of [...state.rowF,...state.rowB].filter(Boolean)){ u.hp=Math.max(u.hp, Math.floor(u.maxhp*0.7)); } }
-      renderPrep(); rollShop();
-      document.getElementById('battle').style.display='none'; document.getElementById('prep').style.display='block';
+      const victory=(battle && battle.result==='win');
+      if(victory){ state.wave+=1; state.gold+=5; for(const u of [...state.rowF,...state.rowB].filter(Boolean)){ u.hp=Math.max(u.hp, Math.floor(u.maxhp*0.7)); } }
+      renderPrep(); rollShop(); document.getElementById('battle').style.display='none'; document.getElementById('prep').style.display='block';
     };
   }
 
-  function init(){
-    try{
-      wire();
-      state.rowF[0]=makeUnit('K'); state.rowB[1]=makeUnit('A'); state.bench[0]=makeUnit('H');
-      renderPrep(); rollShop();
-      dmsg('Init OK — Retro Paper build');
-    }catch(e){ dmsg('Init error: '+e.message); }
-  }
-  if(document.readyState==='complete' || document.readyState==='interactive'){ setTimeout(init, 0); } else { document.addEventListener('DOMContentLoaded', init); }
+  function init(){ try{ wire(); state.rowF[0]=makeUnit('K'); state.rowB[1]=makeUnit('A'); state.bench[0]=makeUnit('H'); renderPrep(); rollShop(); dmsg('Init OK — Retro Paper (Units)'); }catch(e){ dmsg('Init error: '+e.message); } }
+  if(document.readyState==='complete' || document.readyState==='interactive'){ setTimeout(init,0);} else { document.addEventListener('DOMContentLoaded', init); }
 })();
 </script>
 </body>
