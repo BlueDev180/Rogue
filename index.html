@@ -3,15 +3,14 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no" />
-<title>Autobattler — GitHub Safe v2 (Battle Log)</title>
+<title>Autobattler — Sprites & Slow Combat</title>
 <style>
 :root{
-  --bg:#0b0b0b;--panel:#151515;--text:#eaeaea;--muted:#9aa0a6;--accent:#4dabf7;
+  --bg:#0b0b0b;--panel:#151515;--text:#eaeaea;--muted:#9aa0a6;
   --slot:#1f1f1f;--grid:#2a2a2a;--sel:#3b82f6;--hp:#22c55e;--hpbg:#3a3a3a;
   --enemy:#b45309; --ally:#2563eb; --win:#34d399; --loss:#ef4444; --notice:#fbbf24;
 }
-html,body{height:100%;margin:0;background:var(--bg);color:var(--text);
-  font-family:-apple-system,system-ui,Segoe UI,Roboto,Arial,sans-serif}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,system-ui,Segoe UI,Roboto,Arial,sans-serif}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 .panel{background:var(--panel);border:1px solid #222;border-radius:12px;padding:10px 12px;margin:10px 14px}
 .btn{background:#1e1e1e;border:1px solid #333;color:#eaeaea;border-radius:10px;padding:12px 14px;text-align:center;user-select:none}
@@ -21,7 +20,7 @@ html,body{height:100%;margin:0;background:var(--bg);color:var(--text);
 .slot{position:relative;background:var(--slot);border:1px dashed var(--grid);border-radius:10px;min-height:64px;display:grid;place-items:center;padding:6px;overflow:hidden}
 .slot.sel{outline:2px solid var(--sel); outline-offset:2px;}
 .unit{display:grid;gap:2px;place-items:center}
-.badge{font:11px ui-monospace,Menlo,Consolas,monospace;color:#111;background:var(--accent);padding:1px 6px;border-radius:999px}
+.badge{font:11px ui-monospace,Menlo,Consolas,monospace;color:#111;background:#4dabf7;padding:1px 6px;border-radius:999px}
 .hpbar{position:absolute;left:6px;right:6px;bottom:6px;height:6px;background:var(--hpbg);border-radius:6px;overflow:hidden}
 .hpfill{height:100%;background:var(--hp);}
 .shop{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0}
@@ -31,14 +30,11 @@ html,body{height:100%;margin:0;background:var(--bg);color:var(--text);
 #battle{display:none}
 .grid2{display:grid;gap:8px}
 .line{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.cell{position:relative;height:88px;background:#111;border:1px solid #222;border-radius:10px;display:grid;place-items:center;overflow:hidden;margin:6px 0}
+.cell{position:relative;height:104px;background:#111;border:1px solid #222;border-radius:10px;display:grid;place-items:center;overflow:hidden;margin:6px 0}
 .name{position:absolute;top:4px;left:6px;font-size:11px;color:#ddd;opacity:0.9}
 .cell .hpbar{position:absolute;left:6px;right:6px;bottom:6px;height:6px;background:#1e1e1e;border-radius:6px;overflow:hidden}
 .cell .hpfill{height:100%;background:var(--hp)}
-.sprite{width:64px;height:64px;image-rendering: pixelated;background:#2b2b2b;border-radius:8px;display:grid;place-items:center}
-.sprite.ally{outline:2px solid var(--ally)} .sprite.enemy{outline:2px solid var(--enemy)}
-.flash{animation: flash .25s ease-out}
-@keyframes flash{from{filter:brightness(1.6)}to{filter:brightness(1)}}
+.sprite{width:64px;height:64px;image-rendering: pixelated;display:block;background-size:auto 64px;background-repeat:no-repeat}
 .log{font:12px ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;line-height:1.35;max-height:32vh;overflow:auto;background:#0f0f0f;border:1px solid #222;border-radius:10px;padding:10px;margin-top:8px}
 .win{color:var(--win)} .loss{color:var(--loss)} .notice{color:var(--notice)}
 </style>
@@ -81,7 +77,7 @@ html,body{height:100%;margin:0;background:var(--bg);color:var(--text);
     <div class="row">
       <div><strong>Battle</strong> • Wave <span id="bwavenum">1</span></div>
       <div class="small">
-        <button class="btn" id="bspeed">1x</button>
+        <button class="btn" id="bspeed">0.5x</button>
         <button class="btn" id="bquit">Back</button>
         <button class="btn" id="bcontinue" disabled>Continue</button>
       </div>
@@ -99,6 +95,7 @@ html,body{height:100%;margin:0;background:var(--bg);color:var(--text);
 <div id="diag"><span class="ok">Init: pending…</span></div>
 
 <script>
+const EMBED_SPRITES = {"Knight": {"idle": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABZ0lEQVR4nO3bO04DMRAAUAdQJGousBeipKJBcK5ENFSUXGgvQI0UCYUC8UmkhN3IXq+Z99qsPNbEo3i8TkoAAAAAAMB/tSgw5mrAMw8F4vJJ/ke4KDHodru9P/TZYrFYl4iZUfMLSP6HK1IArWt8ATVvyvyf5RwMWqMACE0BEFrOHuC7eRmwT/t6dtbNZGPk/wQ5j0FXd0+bg83Lvsfb5TrN6wsYcvqwb1bzl//xnAL9csICIqMa+dcDEJoCIDQFQGiT9wCvy/eUUkrXz2/3KaWje76Xm8sSd5VCk/9dmuCRLKC6cuffFojQJv8FuNqcp5RmeQ4dgvzvsgUayQKqK3f+bYEITQEQmgIgNAVAaAqA0LKeArkhWZf8j+dN5Y/W/w/QOvkHAJjGmB6gKzWJI/oKMeeqqxCzrxBzUpHuAnUVYvYVYs5VVyFm/9cD3gMQmgIgtDFboL7UJBikrz0BAAAAAACAlnwAYrda41KSwzEAAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 6}, "attack": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABJUlEQVR4nO3bMU7DQBAF0DVCSLmFL0SZigaFcxHRUKXMhXwLJBpTIJqIoEUaWxPPe62jsX/xtd610hoAAAAAALBVQ+Cs147fvATebwky5LBahvuIIT/meT5cuzYMwzHyXkuRIYe1MtxFDYJbpACUpgCUpgCUFnEK1LNjv5TtFEKGHFbPEHIK9Pz+eXXHfunt6SHlKYQMOaydwSsQpSkApYV+COvxePo4tNa6lrnzfhf5pTqMDDlEZLACUJoCUNrqr0Dn/e7Y8h2//YsMOURksAJQmgJQmgJQmgJQmgJQmgJQmgJQmgJQmv8DfJMhhy1kAAAAEuvZBI9LP8QvpuB5Y/C8HlPwvDF4Xo8peN4YPK/H9NdFx6CUpgCUpgAAAAAAAAAAW/MFBIxHl3BBlb8AAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 8}, "death": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABa0lEQVR4nO3cPU7DMBiAYQdQJWYukAsxMrEgOBeIhYmRC+UCzEiVUJkotFJ/LDlxnO951kZ2lre2k6opAQAAAAAAS9WNMObzGdc8jTAvZLsaY9DNZvN46LOu617GmLMgAQcySgCtE3AcAlggAZ9PAMzOlAFflBwMWlNyBdguXWdU+nutvShVFd0CPbytDy5d+17vV3Pbiwo4IGeAfwQcjwAWRMD5BMBs1AjYUyBCm3wF+Fx9p5RSun3/ekwpHS3+4+56jN8qwZYtUCYBL4sAghHwrskDuFlfppS2h5jwj+HIUzpgK0AmAS+LAIIR8C4B0JTSAXsPQGgCIDQBEFrRM8AMf2AFR5UMoPknCgKOx1OgPwIOaPGvumnGOf8Gsa/5Ly2oKmcF6Me6iSOGCnMSSKQzQF9hzqHCnGSIFEDr+gpzDhXmnJQAmEpfYc7h1AU5AZwcDFoTaQUYat8A8xMpgNYNtW8AAAAAANr0Ay7eXckDi2XFAAAAAElFTkSuQmCC", "w": 48, "h": 48, "frames": 4, "fps": 8}}, "Archer": {"idle": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABZElEQVR4nO3bPU7DMBQAYAexoIqNA+RCjEjM5VztjMTIhXIANtS5DIifVmpJKjuOed+3NvKzXv1UP8dNCQAAAAAA+K+6AmNuRjzzVCAun+R/gusSg+73+/Wpz7qu25aImVHzC0j+xytSAK1rfAE1b878X+UcDFqjAAhNARBazh7gu3kZsU/7enbRzWRj5P8COY9BN7vt6mTzcmy13m3Tsr6AMacPxxY1f/mfzinQLxcsIDKqkX89AKEpAEJTAIQ2ew/wePuWUkrp/iWtU0pn93yvDzcl7iqFJv+HNMETWUB15c6/LRChzf4L8Px+l1Ja5Dl0CPJ/yBZoIguortz5twUiNAVAaAqA0BQAoSkAQst6CuSGZF3yP503lT9a/z9A6+QfAGAeU3qAvtQkzhgqxFyqvkLMoULMWUW6C9RXiDlUiLlUfYWYw18PeA9AaAqA0KZsgYZSk2CUofYEAAAAAAAAWvIBVWlZTdPunSUAAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 6}, "attack": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABIUlEQVR4nO3bMU7DQBAF0DWiiXIJX4gyFzDnwhegzIV8iYjSFIgmImiRxtbgea91NPYvvta7VloDAAAAAACOagic9dbxm9fA+21Bhhx2y/AcMeTbuq7To2vDMMyR99qKDDnsleEpahD8RwpAaQpAaQpAaRGnQD079nvZTiFkyGH3DCGnQLf5/HDHfu883VKeQsiQw94ZvAJRmgJQWuiHsB4v7x9Ta61rmbteTpFfqsPIkENEBisApSkApe3+CnS9nOaW7/jtT2TIISKDFYDSFIDSFIDSFIDSFIDSFIDSFIDSFIDS/B/giww5HCEDAACQWM8meNz6IX6wBM8bg+f1WILnjcHzeizB88bgeT2W3y46BqU0BaA0BQAAAAAAAAA4mk/BzUeX4gQGKQAAAABJRU5ErkJggg==", "w": 48, "h": 48, "frames": 4, "fps": 8}, "death": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABaElEQVR4nO3cMU7DMBiAUQexoIqNA+RCjEjM5Vx0RmLkQjkAG+pcJgpFahtLThznf29tZGf5ajupmhIAAAAAALBW3QRjvo645mWCeSHb7RSDHg6H7bnPuq7bTTFnQQIOZJIAWifgOASwQgIeTwAszpwB35QcDFpTcgU4Ll0jKv251l6Uqopugfa7zdml67/Ndr+0vaiAA3IG+EPA8QhgRQScTwAsRo2APQUitNlXgOf7z5RSSo/vaZtSulj8x9PdFL9VgiNboEwCXhcBBCPgU7MH8Pb1kFI6HmLCP4YjT+mArQCZBLwuAghGwKcEQFNKB+w9AKEJgNAEQGhFzwAL/IEVXFQygOafKAg4Hk+Bfgk4oNW/6qYZY/4N4r/mv7SgqpwVoJ/qJi4YKsxJIJHOAH2FOYcKc5IhUgCt6yvMOVSYc1YCYC59hTmHaxfkBHB1MGhNpBVgqH0DLE+kAFo31L4BAAAAAGjTN9geXJQxLB4UAAAAAElFTkSuQmCC", "w": 48, "h": 48, "frames": 4, "fps": 8}}, "Healer": {"idle": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABa0lEQVR4nO3bvU3DQBQA4AuioUGM4EWomYAFwg5pES07JAtQUlGziEdALBAKxE8iJdjRnc/H+74qUiy/08s95d75nBIAAAAAAPBfLQrccz3gmrsCcfkk/yOcl7jpdrtdHvpusVhsSsTMqPkJJP/DFSmA1jU+gZo3Zf7Pct4MWqMACE0BEFrOHuC7eRmwTvu6dtbNZGPk/wQ5t0HXVy8PB5uXfW8395s0rx9gyO7DvlmNX/7Hswv0ywkTiIxq5F8PQGgKgNAUAKFN3gNcv68+Pzytlimlo2u+59uLEmeVQpP/XZrgkUygunLn3xKI0Cb/B3i9fEwpzXIfOgT532UJNJIJVFfu/FsCEZoCIDQFQGgKgNAUAKFl3QVyQrIu+R/Pk8ofrb8P0Dr5BwCYxpgeoCs1iCP6CjHnqqsQs68Qc1KRzgJ1FWL2FWLOVVchZv/XBZ4DEJoCILQxS6C+1CAYpK89AAAAAAAAgJZ8AC2cW+mbxHp3AAAAAElFTkSuQmCC", "w": 48, "h": 48, "frames": 4, "fps": 6}, "attack": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABKElEQVR4nO3bMU7DQBAF0DWiSccRfBuqlLlAOAjiIOQClKlyGx+BjtIUiCYiaJHG1uB5r3U09i++1rtWWgMAAAAAALZqCJz12vGbp8D7LUGGHFbLcB8x5Ns8z8db14ZhOEXeayky5LBWhruoQfAfKQClKQClKQClRZwC9ezYr2U7hZAhh9UzhJwCPVxebu7Yr70/Pqc8hZAhh7UzeAWiNAWgtNAPYT32bx/H1lrXMnc+7CK/VIeRIYeIDFYASlMASlv9Feh82J1avuO3P5Ehh4gMVgBKUwBKUwBKUwBKUwBKUwBKUwBKUwBK83+ALzLksIUMAABAYj2b4HHph/jBFDxvDJ7XYwqeNwbP6zEFzxuD5/WYfrvoGJTSFIDSFAAAAAAAAABgaz4BiA1HlxaycyQAAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 8}, "death": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABb0lEQVR4nO3csU3DQBiA0QuioUGM4EWomYAFwg60iJYdYAFKKmoW8QiIBUKBCCRSEp909vn8v1dFiuVz8+V8ZyspAQAAAAAAS7Ua4ZzPA465G2FcyHY+xkk3m8360Her1epljDELEnAgowTQOgHHIYAFEvBwAmB2pgz4rOTJoDUlZ4Dt1DWg0t9j3YtSVdFboKv3x4NT177Pm4e53YsKOCBrgH8EHI8AFkTA+QTAbNQI2C4QoU0+A1x/3f98eL1fp5SOFv92ezHGu0qw5RYok4CXRQDBCHjX5AF8XD6llLaLmPDbcOQpHbAZIJOAl0UAwQh4lwBoSumAPQcgNAEQmgAIregaYIYvWMFRJQNofkdBwPHYBfoj4IAW/6ibZgz5N4h9zf9oQVU5M0A31kUc0VcYk0AirQG6CmP2FcYkQ6QAWtdVGLOvMOakBMBUugpj9qcOyAng5MmgNZFmgL72BTA/kQJoXV/7AgAAAACgTd9Ek1+EjXQHDgAAAABJRU5ErkJggg==", "w": 48, "h": 48, "frames": 4, "fps": 8}}, "Assassin": {"idle": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABaUlEQVR4nO3bO04DMRAAUC+ioeQGuQ0VJS1FoKflCGnpSQquQMVt9gYcIRSITyIl7Eb2es2812blsSYexeN1UgIAAAAAAP6rrsCY6wHP3BWIyyf5H+G8xKDb7XZ56LOu6zYlYmbU/AKS/+GKFEDrGl9AzZsy/2c5B4PWKABCUwCElrMH+G5eBuzTvp6ddTPZGPk/Qc5j0PX71cPB5mXf5dvTJs3rCxhy+rBvVvOX//GcAv1ywgIioxr51wMQmgIgNAVAaJP3ALf3q5RSStf3q2VK6eie7/XmosRdpdDkf5cmeCQLqK7c+bcFIrTJfwFenh9TSrM8hw5B/nfZAo1kAdWVO/+2QISmAAhNARCaAiA0BUBoWU+B3JCsS/7H86byR+v/B2id/AMATGNMD7AoNYkj+gox52pRIWZfIeakIt0FWlSI2VeIOVeLCjH7vx7wHoDQFAChjdkC9aUmwSB97QkAAAAAAAC05APh01onwHw2FAAAAABJRU5ErkJggg==", "w": 48, "h": 48, "frames": 4, "fps": 6}, "attack": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABKElEQVR4nO3bsU3DQBQG4DOiSckG3oYqZRYIAzALA5AFKFNlG29ASWkKRBMRdEjP1sPv+1pHz/6LX+c7K60BAAAAAABbNQTOeu34zVPg/ZYgQw6rZbiPGPJtnufjrWvDMJwi77UUGXJYK8Nd1CD4jxSA0hSA0hSA0iJOgXp27NeynULIkMPqGUJOgd4fn2/u2K89XF5SnkLIkMPaGbwCUZoCUFroh7Ae+7ePY2uta5k7H3aRX6rDyJBDRAYrAKUpAKWt/gp0PuxOLd/x25/IkENEBisApSkApSkApSkApSkApSkApSkApSkApfk/wBcZcthCBgAAILGeTfC49EP8YAqeNwbP6zEFzxuD5/WYgueNwfN6TL9ddAxKaQpAaQoAAAAAAAAAsDWfxp1HlwR+q48AAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 8}, "death": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABbUlEQVR4nO3csVHDMBiAUZmjoWSDbENFSUsR6GkZIS09ULACFdt4A0YIFYHkLol1J1uW//fa+CQ3XyTZuaQEAAAAAAAsVTfCmG8DrnkYYV7IdjnGoNvtdn3ss67r3seYsyABBzJKAK0TcBwCWCABDycAZmfKgC9KDgatKbkC7JauAZX+XmsvSlVFt0DfN09Hl65D118vc9uLCjggZ4B/BByPABZEwPkEwGzUCNhTIEKbfAW4f9yklFK6fdysU0oni/+8uxrjt0qwYwuUScDLIoBgBLxv8gA+Xp9TSrtDTPjHcOQpHbAVIJOAl0UAwQh4nwBoSumAvQcgNAEQmgAIregZYIY/sIKTSgbQ/BMFAcfjKdAfAQe0+FfdNGPIv0Ecav5LC6rKWQFWY93ECX2FOQkk0hlgVWHOvsKcZIgUQOtWFebsK8w5KQEwlVWFOftzF+QEcHYwaE2kFaCvfQPMT6QAWtfXvgEAAAAAaNMPd9ZdZ9RxVREAAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 8}}, "Mage": {"idle": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABZklEQVR4nO3bS07DMBAAUAcQErfIhViygCWcgVNwhnYJC5ZcKLdAQkJlgfi0UktS2XHMvLdt5LGmHtXjuCkBAAAAAAD/VVdgzNWIZ+4KxOWT/E9wVmLQzWZzu++zruvWJWJm1PwCkv/xihRA6xpfQM2bM/8nOQeD1igAQlMAhJazB/huXkbs076eXXQz2Rj5P0LOY9DV08Pb3uZl1/X9+Tot6wsYc/qwa1Hzl//pnAL9csQCIqMa+dcDEJoCIDQFQGiz9wCP/XtKKaXL59fblNLBPd/L1UWJu0qhyf82TfBEFlBdufNvC0Ros/8C3AynKaVFnkOHIP/bbIEmsoDqyp1/WyBCUwCEpgAITQEQmgIgtKynQG5I1iX/03lT+aP1/wO0Tv4BAOYxpQfoS03igKFCzKXqK8QcKsScVaS7QH2FmEOFmEvVV4g5/PWA9wCEpgAIbcoWaCg1CUYZak8AAAAAAACgJR/jE1nVFa7iegAAAABJRU5ErkJggg==", "w": 48, "h": 48, "frames": 4, "fps": 6}, "attack": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABJ0lEQVR4nO3bMU7DQBAF0DWKkHILX4gyBW04A6fgDKSlSJkL+RZINKZANBFBizS2Bs97raOxf/G13rXSGgAAAAAAsFVD4KzXjt88Bd5vCTLksFqGXcSQb/M8H29dG4bhFHmvpciQw1oZ7qIGwX+kAJSmAJSmAJQWcQrUs2O/lu0UQoYcVs8Qcgr09vJxc8d+7fH5PuUphAw5rJ3BKxClKQClhX4I6/Fwfj+21rqWucthH/mlOowMOURksAJQmgJQ2uqvQJfD/tTyHb/9iQw5RGSwAlCaAlCaAlCaAlCaAlCaAlCaAlCaAlCa/wN8kSGHLWQAAAAS69kEj0s/xA+m4Hlj8LweU/C8MXhejyl43hg8r8f020XHoJSmAJSmAAAAAAAAAABb8wkjfEeX0/CAGQAAAABJRU5ErkJggg==", "w": 48, "h": 48, "frames": 4, "fps": 8}, "death": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABa0lEQVR4nO3cMU7DMBiAUQcQErfIhRgZYIQzcArOACMMjFwot0BCQmWi0EptY8mJ4/zvrY3sLF9tJ1VTAgAAAAAA1qqbYMznEdc8TDAvZLuYYtDNZnN/6LOu616mmLMgAQcySQCtE3AcAlghAY8nABZnzoDPSg4GrSm5AmyXrhGV/l5rL0pVRbdAb09fB5eufbePl0vbiwo4IGeAfwQcjwBWRMD5BMBi1AjYUyBCm30FeO2/U0opXb9/3qeUjhb/cXM1xW+VYMsWKJOA10UAwQh41+wB3A3nKaXtISb8YzjylA7YCpBJwOsigGAEvEsANKV0wN4DEJoACE0AhFb0DLDAH1jBUSUDaP6JgoDj8RToj4ADWv2rbpox5t8g9jX/pQVV5awA/VQ3ccRQYU4CiXQG6CvMOVSYkwyRAmhdX2HOocKcsxIAc+krzDmcuiAngJODQWsirQBD7RtgeSIF0Lqh9g0AAAAAQJt+AA8vXI6QkOBcAAAAAElFTkSuQmCC", "w": 48, "h": 48, "frames": 4, "fps": 8}}};
 (function(){
   const diag = document.getElementById('diag');
   function dmsg(msg, cls){ diag.innerHTML = '<span class="'+(cls||'ok')+'">'+msg+'</span>'; }
@@ -113,17 +110,17 @@ html,body{height:100%;margin:0;background:var(--bg);color:var(--text);
     selected: null
   };
   const CLASSES = {
-    K:{name:'Knight', cls:'tank', hp:100, atk:10, spd:1.2, range:'melee'},
-    A:{name:'Archer', cls:'ranger', hp:60, atk:15, spd:0.9, range:'ranged'},
-    H:{name:'Healer', cls:'healer', hp:50, atk:5, spd:1.5, range:'support', heal:15},
-    S:{name:'Assassin', cls:'assassin', hp:55, atk:18, spd:0.8, range:'melee', backstab:true},
-    M:{name:'Mage', cls:'mage', hp:55, atk:14, spd:1.1, range:'ranged', splash:true}
+    K:{name:'Knight', cls:'Knight', hp:100, atk:10, spd:1.8, range:'melee'},
+    A:{name:'Archer', cls:'Archer', hp:60, atk:15, spd:1.4, range:'ranged'},
+    H:{name:'Healer', cls:'Healer', hp:50, atk:5, spd:2.0, range:'support', heal:15},
+    S:{name:'Assassin', cls:'Assassin', hp:55, atk:18, spd:1.6, range:'melee', backstab:true},
+    M:{name:'Mage', cls:'Mage', hp:55, atk:14, spd:1.6, range:'ranged', splash:true}
   };
   const ENEMIES = [
-    {name:'Goblins', count:3, hp:40, atk:8, spd:1.2},
-    {name:'Wolves', count:4, hp:35, atk:6, spd:0.7},
-    {name:'Slime', count:2, hp:80, atk:12, spd:1.3, poison:5},
-    {name:'Ogre Chief', count:1, hp:200, atk:20, spd:1.5}
+    {name:'Goblins', count:3, hp:40, atk:8, spd:1.8},
+    {name:'Wolves', count:4, hp:35, atk:6, spd:1.4},
+    {name:'Slime', count:2, hp:80, atk:12, spd:2.0, poison:5},
+    {name:'Ogre Chief', count:1, hp:200, atk:20, spd:2.2}
   ];
   function mulberry32(a){return function(){var t=a+=0x6D2B79F5;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296;}}
   const rng = mulberry32(1337);
@@ -161,10 +158,7 @@ html,body{height:100%;margin:0;background:var(--bg);color:var(--text);
   }
   function onSlotTap(area, idx){
     const sel = state.selected;
-    if(!sel){
-      const u = getAt(area, idx); if(!u){ dmsg('Empty slot', 'warn'); return; }
-      state.selected = {area, idx}; renderPrep(); return;
-    }
+    if(!sel){ const u = getAt(area, idx); if(!u){ dmsg('Empty slot', 'warn'); return; } state.selected = {area, idx}; renderPrep(); return; }
     if(sel.area===area && sel.idx===idx){ state.selected=null; renderPrep(); return; }
     const fromU = getAt(sel.area, sel.idx); const toU = getAt(area, idx); if(!fromU){ state.selected=null; renderPrep(); return; }
     const movingIntoBoard = (sel.area==='bench') && (area!=='bench') && !toU;
@@ -203,19 +197,47 @@ html,body{height:100%;margin:0;background:var(--bg);color:var(--text);
       removeOne(state.bench); removeOne(state.rowB); removeOne(state.rowF);
       const up=makeUnit(u.code); up.tier=u.tier; up.maxhp=u.maxhp; up.hp=u.maxhp; up.atk=u.atk; powerUp(up);
       const slot=state.bench.findIndex(x=>!x); if(slot!==-1) state.bench[slot]=up;
-      dmsg(`Merge! ${u.name} → tier ${up.tier}`, 'ok');
-      blog(`Merge! ${u.name} → Tier ${up.tier}`);
-    }else{
-      const idx=state.bench.findIndex(x=>!x); if(idx!==-1) state.bench[idx]=u;
-    }
+      dmsg(`Merge! ${u.name} → tier ${up.tier}`, 'ok'); blog(`Merge! ${u.name} → Tier ${up.tier}`);
+    }else{ const idx=state.bench.findIndex(x=>!x); if(idx!==-1) state.bench[idx]=u; }
   }
 
-  // Battle with log
-  const PACE=1.35;
+  // Sprite Animator
+  const SPR = EMBED_SPRITES;
+  function SpritePlayer(conf, name){
+    const img = new Image();
+    img.src = conf.src;
+    return { img, conf, frame:0, t:0, playing:true, action:'idle', name };
+  }
+  function setAction(player, action){
+    const anim = SPR[player.name][action];
+    if(!anim) return;
+    player.action = action;
+    player.conf = anim;
+    player.img.src = anim.src;
+    player.frame = 0; player.t = 0;
+  }
+  function stepAnim(player, dt){
+    const conf = player.conf; if(!conf) return;
+    player.t += dt;
+    const dur = 1/conf.fps;
+    if(player.t >= dur){ player.t -= dur; player.frame = (player.frame + 1) % conf.frames; }
+  }
+
+  // Battle with sprite rendering + log + slow pacing
+  const PACE=2.2; // slower combat base
+  let speedIdx=0; const SPEEDS=[0.5,0.75,1.0];
   let battle=null;
   const blogEl=document.getElementById('blog');
   function blog(msg, cls){ const p=document.createElement('div'); if(cls) p.className=cls; p.textContent=msg; blogEl.appendChild(p); blogEl.scrollTop=blogEl.scrollHeight; }
   function clearBlog(){ blogEl.textContent=''; }
+
+  function makeCell(label,hp,maxhp,side){
+    const c=document.createElement('div'); c.className='cell';
+    const spr=document.createElement('div'); spr.className='sprite'; c.appendChild(spr);
+    const nm=document.createElement('div'); nm.className='name'; nm.textContent=label; c.appendChild(nm);
+    const hb=document.createElement('div'); hb.className='hpbar'; const fill=document.createElement('div'); fill.className='hpfill'; fill.style.width=Math.round(100*hp/maxhp)+'%'; hb.appendChild(fill); c.appendChild(hb);
+    return {c, spr, fill};
+  }
 
   function toBattle(){
     clearBlog();
@@ -227,79 +249,88 @@ html,body{height:100%;margin:0;background:var(--bg);color:var(--text);
     party.forEach(p=>p.u.hp=Math.min(p.u.maxhp+5,p.u.hp+5));
     const base = ENEMIES[(state.wave-1)%ENEMIES.length];
     const mobs=[]; for(let i=0;i<base.count;i++){ const mh=Math.round(base.hp*(1+0.18*(state.wave-1))); mobs.push({name:base.name, side:'enemy', hp:mh, maxhp:mh, atk:Math.round(base.atk*(1+0.12*(state.wave-1))), spd:base.spd, next:base.spd*PACE}); }
-    battle={party,mobs,poison:base.poison||0, t:0, dt:0.08, speed:1, running:true, result:null};
+    battle={party,mobs,poison:base.poison||0, t:0, dt:0.06, speed:SPEEDS[speedIdx], running:true, result:null, els:{}};
     document.getElementById('bwavenum').textContent=state.wave;
     renderField(battle);
     document.getElementById('prep').style.display='none'; document.getElementById('battle').style.display='block';
     blog(`▶ Wave ${state.wave}: ${base.name} appear.`,'notice');
-    loop(battle);
+    loop();
   }
+
   function renderField(b){
     const eline=document.getElementById('eline'), aline=document.getElementById('aline');
     eline.innerHTML=''; aline.innerHTML='';
-    function cell(label,hp,maxhp,side){
-      const c=document.createElement('div'); c.className='cell';
-      const spr=document.createElement('div'); spr.className='sprite '+(side==='ally'?'ally':'enemy'); c.appendChild(spr);
-      const nm=document.createElement('div'); nm.className='name'; nm.textContent=label; c.appendChild(nm);
-      const hb=document.createElement('div'); hb.className='hpbar'; const fill=document.createElement('div'); fill.className='hpfill'; fill.style.width=Math.round(100*hp/maxhp)+'%'; hb.appendChild(fill); c.appendChild(hb);
-      return {c, spr, fill};
-    }
-    for(let i=0;i<4;i++){ const m=b.mobs[i]; if(m){ const d=cell(b.mobs[0].name,m.hp,m.maxhp,'enemy'); m._=d; eline.appendChild(d.c);} else { const e=document.createElement('div'); e.className='cell'; eline.appendChild(e);} }
-    for(let i=0;i<4;i++){ const p=b.party[i]; if(p){ const d=cell(p.u.name,p.u.hp,p.u.maxhp,'ally'); p._=d; aline.appendChild(d.c);} else { const e=document.createElement('div'); e.className='cell'; aline.appendChild(e);} }
+    // enemies
+    for(let i=0;i<4;i++){ const m=b.mobs[i]; if(m){ const d=makeCell(b.mobs[0].name,m.hp,m.maxhp,'enemy'); m._=d; eline.appendChild(d.c);
+      const cls='Knight'; const conf=SPR[cls].idle; const sp=SpritePlayer(conf, cls); m._player=sp; d.spr.style.backgroundImage = 'url('+sp.conf.src+')'; d.spr.style.backgroundPosition='0px 0px';
+    } else { eline.appendChild(Object.assign(document.createElement('div'),{className:'cell'})); } }
+    // allies
+    for(let i=0;i<4;i++){ const p=b.party[i]; if(p){ const d=makeCell(p.u.name,p.u.hp,p.u.maxhp,'ally'); p._=d; aline.appendChild(d.c);
+      const cls=p.u.cls; const conf=SPR[cls].idle; const sp=SpritePlayer(conf, cls); p._player=sp; d.spr.style.backgroundImage = 'url('+sp.conf.src+')'; d.spr.style.backgroundPosition='0px 0px';
+    } else { aline.appendChild(Object.assign(document.createElement('div'),{className:'cell'})); } }
   }
+
+  function setBGFrame(el, conf, frame){
+    const x = -conf.w*frame;
+    el.style.backgroundImage = 'url('+conf.src+')';
+    el.style.backgroundSize = 'auto 64px';
+    el.style.backgroundPosition = x+'px 0px';
+  }
+
   function pickAlive(arr){ const alive=arr.filter(x=>x.hp>0); return alive.length?alive[Math.floor(rand()*alive.length)]:null; }
 
   function endBattle(victory){
     battle.running=false;
     battle.result = victory? 'win':'loss';
     document.getElementById('bcontinue').disabled = false;
-    if(victory){
-      blog('Victory! +5 gold. Tap Continue to return to prep.','win');
-    }else{
-      blog('Defeat... Tap Continue to return to prep.','loss');
-    }
+    if(victory) blog('Victory! +5 gold. Tap Continue.','win'); else blog('Defeat... Tap Continue.','loss');
   }
 
-  function loop(b){
-    if(!b.running) return;
-    const step = b.dt*b.speed; b.t+=step;
+  function loop(){
+    if(!battle || !battle.running) return;
+    const step = battle.dt*battle.speed; battle.t+=step;
 
-    if(b.poison && Math.floor(b.t)%3===0 && Math.abs(b.t-Math.floor(b.t))<1e-9){
-      b.party.forEach(p=>{ if(p.u.hp>0){ p.u.hp-=b.poison; if(p._) p._.fill.style.width=Math.round(100*p.u.hp/p.u.maxhp)+'%'; } });
-      blog(`Poison clouds tick for ${b.poison} damage.`);
+    // animate sprites
+    for(const p of battle.party){ if(p._player){ stepAnim(p._player, step); setBGFrame(p._.spr, p._player.conf, p._player.frame); } }
+    for(const m of battle.mobs){ if(m._player){ stepAnim(m._player, step); setBGFrame(m._.spr, m._player.conf, m._player.frame); } }
+
+    if(battle.poison && Math.floor(battle.t)%3===0 && Math.abs(battle.t-Math.floor(battle.t))<1e-9){
+      battle.party.forEach(p=>{ if(p.u.hp>0){ p.u.hp-=battle.poison; if(p._) p._.fill.style.width=Math.round(100*p.u.hp/p.u.maxhp)+'%'; blog(`Poison ticks for ${battle.poison}.`); } });
     }
 
-    for(const p of b.party){
+    for(const p of battle.party){
       if(p.u.hp<=0) continue;
       p.next -= step;
       if(p.next<=0){
         if(p.u.heal){
-          const tgt=b.party.reduce((a,c)=> (c.u.hp>0 && (!a||c.u.hp<a.u.hp))?c:a, null);
-          if(tgt){ const pre=tgt.u.hp; tgt.u.hp=Math.min(tgt.u.maxhp, tgt.u.hp + p.u.heal); if(tgt._) tgt._.fill.style.width=Math.round(100*tgt.u.hp/tgt.u.maxhp)+'%'; const amt=tgt.u.hp-pre; blog(`${p.u.name} heals ${tgt.u.name} for ${amt}.`); }
+          const tgt=battle.party.reduce((a,c)=> (c.u.hp>0 && (!a||c.u.hp<a.u.hp))?c:a, null);
+          if(tgt){ const pre=tgt.u.hp; tgt.u.hp=Math.min(tgt.u.maxhp, tgt.u.hp + p.u.heal); if(tgt._) tgt._.fill.style.width=Math.round(100*tgt.u.hp/tgt.u.maxhp)+'%'; blog(`${p.u.name} heals ${tgt.u.name} for ${tgt.u.hp-pre}.`); }
         }else{
-          const t=pickAlive(b.mobs);
-          if(t){ let dmg=p.u.atk; if(p.u.backstab) dmg=Math.round(dmg*1.2); if(p.u.splash){ const other=pickAlive(b.mobs.filter(m=>m!==t)); t.hp-=dmg; if(other) other.hp-=Math.floor(dmg*0.5); if(t._) t._.fill.style.width=Math.round(100*t.hp/t.maxhp)+'%'; if(other&&other._) other._.fill.style.width=Math.round(100*other.hp/other.maxhp)+'%'; blog(`${p.u.name} hits ${t.name} for ${dmg}` + (other?` and splashes another for ${Math.floor(dmg*0.5)}`:'' ) + '.'); } else { t.hp-=dmg; if(t._) t._.fill.style.width=Math.round(100*t.hp/t.maxhp)+'%'; blog(`${p.u.name} hits ${t.name} for ${dmg}.`); } if(p._){ p._.spr.classList.add('flash'); setTimeout(()=>p._&&p._.spr.classList.remove('flash'),220); } }
+          const t=pickAlive(battle.mobs);
+          if(t){ let dmg=p.u.atk; if(p.u.backstab) dmg=Math.round(dmg*1.2);
+            t.hp-=dmg; if(t._) t._.fill.style.width=Math.round(100*t.hp/t.maxhp)+'%'; blog(`${p.u.name} hits ${t.name} for ${dmg}.`);
+            if(p._player){ setAction(p._player,'attack'); setTimeout(()=>{ if(p._player) setAction(p._player,'idle'); }, 400); }
+          }
         }
         p.next += p.u.spd*PACE;
       }
     }
-    for(const m of b.mobs){
+    for(const m of battle.mobs){
       if(m.hp<=0) continue;
       m.next -= step;
       if(m.next<=0){
-        const tgt = pickAlive(b.party.map(x=>x.u));
-        if(tgt){ tgt.hp-=m.atk; const wrap=b.party.find(pp=>pp.u===tgt); if(wrap && wrap._) wrap._.fill.style.width=Math.round(100*wrap.u.hp/wrap.u.maxhp)+'%'; blog(`${m.name} hits ${tgt.name} for ${m.atk}.`); }
+        const tgt = pickAlive(battle.party.map(x=>x.u));
+        if(tgt){ tgt.hp-=m.atk; const wrap=battle.party.find(pp=>pp.u===tgt); if(wrap && wrap._) wrap._.fill.style.width=Math.round(100*wrap.u.hp/wrap.u.maxhp)+'%'; blog(`${m.name} hits ${tgt.name} for ${m.atk}.`);
+          if(m._player){ setAction(m._player,'attack'); setTimeout(()=>{ if(m._player) setAction(m._player,'idle'); }, 400); }
+        }
         m.next += m.spd*PACE;
       }
     }
 
-    b.mobs=b.mobs.filter(m=>m.hp>0);
-    const partyAlive=b.party.some(p=>p.u.hp>0), mobsAlive=b.mobs.length>0;
-    if(!partyAlive || !mobsAlive || b.t>120){
-      endBattle(!mobsAlive && partyAlive);
-      return;
-    }
-    requestAnimationFrame(()=>loop(b));
+    battle.mobs=battle.mobs.filter(m=>m.hp>0);
+    const partyAlive=battle.party.some(p=>p.u.hp>0), mobsAlive=battle.mobs.length>0;
+    if(!partyAlive || !mobsAlive || battle.t>120){ endBattle(!mobsAlive && partyAlive); return; }
+    requestAnimationFrame(loop);
   }
 
   // Buttons
@@ -310,14 +341,10 @@ html,body{height:100%;margin:0;background:var(--bg);color:var(--text);
     document.getElementById('start').onclick=()=>{ document.getElementById('bcontinue').disabled = true; toBattle(); };
     document.getElementById('spawn').onclick=()=>{ state.rowF=[makeUnit('K'),null,null,null]; state.rowB=[null,makeUnit('A'),null,null]; state.bench=[makeUnit('H'),null,null,null,null]; renderPrep(); dmsg('Starter units spawned', 'ok'); };
     document.getElementById('bquit').onclick=()=>{ document.getElementById('battle').style.display='none'; document.getElementById('prep').style.display='block'; dmsg('Exited battle early', 'warn'); };
-    document.getElementById('bspeed').onclick=()=>{ /* simple toggle */ };
+    document.getElementById('bspeed').onclick=()=>{ speedIdx=(speedIdx+1)%SPEEDS.length; if(battle) battle.speed=SPEEDS[speedIdx]; document.getElementById('bspeed').textContent=SPEEDS[speedIdx]+'x'; };
     document.getElementById('bcontinue').onclick=()=>{
-      // Apply victory/defeat results and return
       const victory = (battle && battle.result==='win');
-      if(victory){
-        state.wave += 1; state.gold += 5;
-        for(const u of [...state.rowF,...state.rowB].filter(Boolean)){ u.hp = Math.max(u.hp, Math.floor(u.maxhp*0.7)); }
-      }
+      if(victory){ state.wave += 1; state.gold += 5; for(const u of [...state.rowF,...state.rowB].filter(Boolean)){ u.hp = Math.max(u.hp, Math.floor(u.maxhp*0.7)); } }
       renderPrep(); rollShop();
       document.getElementById('battle').style.display='none'; document.getElementById('prep').style.display='block';
       dmsg(victory?`Victory! +5g. Wave ${state.wave}`:'Defeat... Try again', victory?'ok':'warn');
@@ -329,12 +356,11 @@ html,body{height:100%;margin:0;background:var(--bg);color:var(--text);
       wire();
       state.rowF[0]=makeUnit('K'); state.rowB[1]=makeUnit('A'); state.bench[0]=makeUnit('H');
       renderPrep(); rollShop();
-      dmsg('Init OK — ready', 'ok');
+      dmsg('Init OK — sprites & slow combat', 'ok');
     }catch(e){
       console.error(e); dmsg('Init error: '+e.message, 'err');
     }
   }
-
   if(document.readyState==='complete' || document.readyState==='interactive'){ setTimeout(safeInit, 0); }
   else { document.addEventListener('DOMContentLoaded', safeInit); }
   window.addEventListener('error', (e)=>{ dmsg('Runtime error: '+e.message, 'err'); });
