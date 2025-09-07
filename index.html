@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no" />
-<title>Autobattler — GitHub Safe</title>
+<title>Autobattler — GitHub Safe v2 (Battle Log)</title>
 <style>
 :root{
   --bg:#0b0b0b;--panel:#151515;--text:#eaeaea;--muted:#9aa0a6;--accent:#4dabf7;
   --slot:#1f1f1f;--grid:#2a2a2a;--sel:#3b82f6;--hp:#22c55e;--hpbg:#3a3a3a;
-  --enemy:#b45309; --ally:#2563eb;
+  --enemy:#b45309; --ally:#2563eb; --win:#34d399; --loss:#ef4444; --notice:#fbbf24;
 }
 html,body{height:100%;margin:0;background:var(--bg);color:var(--text);
   font-family:-apple-system,system-ui,Segoe UI,Roboto,Arial,sans-serif}
@@ -29,6 +29,7 @@ html,body{height:100%;margin:0;background:var(--bg);color:var(--text);
 #diag{position:fixed;left:10px;right:10px;bottom:10px;background:#111;border:1px solid #333;border-radius:10px;padding:8px 10px;font:12px ui-monospace,Menlo,Consolas,monospace}
 .ok{color:#34d399} .warn{color:#f59e0b} .err{color:#ef4444}
 #battle{display:none}
+.grid2{display:grid;gap:8px}
 .line{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .cell{position:relative;height:88px;background:#111;border:1px solid #222;border-radius:10px;display:grid;place-items:center;overflow:hidden;margin:6px 0}
 .name{position:absolute;top:4px;left:6px;font-size:11px;color:#ddd;opacity:0.9}
@@ -38,6 +39,8 @@ html,body{height:100%;margin:0;background:var(--bg);color:var(--text);
 .sprite.ally{outline:2px solid var(--ally)} .sprite.enemy{outline:2px solid var(--enemy)}
 .flash{animation: flash .25s ease-out}
 @keyframes flash{from{filter:brightness(1.6)}to{filter:brightness(1)}}
+.log{font:12px ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;line-height:1.35;max-height:32vh;overflow:auto;background:#0f0f0f;border:1px solid #222;border-radius:10px;padding:10px;margin-top:8px}
+.win{color:var(--win)} .loss{color:var(--loss)} .notice{color:var(--notice)}
 </style>
 </head>
 <body>
@@ -74,13 +77,22 @@ html,body{height:100%;margin:0;background:var(--bg);color:var(--text);
 </div>
 
 <div id="battle">
-  <div class="panel">
+  <div class="panel grid2">
     <div class="row">
       <div><strong>Battle</strong> • Wave <span id="bwavenum">1</span></div>
-      <div class="small"><button class="btn" id="bspeed">1x</button> <button class="btn" id="bquit">Back</button></div>
+      <div class="small">
+        <button class="btn" id="bspeed">1x</button>
+        <button class="btn" id="bquit">Back</button>
+        <button class="btn" id="bcontinue" disabled>Continue</button>
+      </div>
     </div>
+
     <div class="small">Enemies</div><div class="line" id="eline"></div>
     <div class="small">Allies</div><div class="line" id="aline"></div>
+    <div>
+      <div class="row"><strong>Battle Log</strong></div>
+      <div class="log" id="blog"></div>
+    </div>
   </div>
 </div>
 
@@ -88,11 +100,9 @@ html,body{height:100%;margin:0;background:var(--bg);color:var(--text);
 
 <script>
 (function(){
-  // Diagnostics helper
   const diag = document.getElementById('diag');
   function dmsg(msg, cls){ diag.innerHTML = '<span class="'+(cls||'ok')+'">'+msg+'</span>'; }
 
-  // Global safe state
   const state = {
     gold: 10, level: 3, cap: 3, benchCap: 5, levelCost: 4,
     rowF: [null,null,null,null],
@@ -128,7 +138,6 @@ html,body{height:100%;margin:0;background:var(--bg);color:var(--text);
   function getAt(area, idx){ return area==='rowF'?state.rowF[idx] : area==='rowB'?state.rowB[idx] : state.bench[idx]; }
   function setAt(area, idx, val){ if(area==='rowF') state.rowF[idx]=val; else if(area==='rowB') state.rowB[idx]=val; else state.bench[idx]=val; }
 
-  // Prep rendering
   function renderPrep(){
     const f=document.getElementById('rowF'), b=document.getElementById('rowB'), bench=document.getElementById('bench');
     f.innerHTML=''; b.innerHTML=''; bench.innerHTML='';
@@ -165,7 +174,6 @@ html,body{height:100%;margin:0;background:var(--bg);color:var(--text);
 
   function enemyPreviewText(){ const base = ENEMIES[(state.wave-1)%ENEMIES.length]; return `Next: ${base.name} ×${base.count} • HP ${base.hp} • ATK ${base.atk}` + (base.poison?` • Poison ${base.poison}`:''); }
 
-  // Shop
   function rollShop(){
     if(state.locked) return;
     const shop=document.getElementById('shop'); shop.innerHTML='';
@@ -177,6 +185,7 @@ html,body{height:100%;margin:0;background:var(--bg);color:var(--text);
         if(state.gold<3){ dmsg('Not enough gold', 'warn'); return; }
         const idx=state.bench.findIndex(x=>!x); if(idx===-1){ dmsg('Bench full', 'warn'); return; }
         state.gold-=3; addOrMerge(u); renderPrep();
+        blog(`Bought ${u.name} (3g).`);
       };
       shop.appendChild(btn);
     });
@@ -195,14 +204,21 @@ html,body{height:100%;margin:0;background:var(--bg);color:var(--text);
       const up=makeUnit(u.code); up.tier=u.tier; up.maxhp=u.maxhp; up.hp=u.maxhp; up.atk=u.atk; powerUp(up);
       const slot=state.bench.findIndex(x=>!x); if(slot!==-1) state.bench[slot]=up;
       dmsg(`Merge! ${u.name} → tier ${up.tier}`, 'ok');
+      blog(`Merge! ${u.name} → Tier ${up.tier}`);
     }else{
       const idx=state.bench.findIndex(x=>!x); if(idx!==-1) state.bench[idx]=u;
     }
   }
 
-  // Battle screen (simplified)
+  // Battle with log
   const PACE=1.35;
+  let battle=null;
+  const blogEl=document.getElementById('blog');
+  function blog(msg, cls){ const p=document.createElement('div'); if(cls) p.className=cls; p.textContent=msg; blogEl.appendChild(p); blogEl.scrollTop=blogEl.scrollHeight; }
+  function clearBlog(){ blogEl.textContent=''; }
+
   function toBattle(){
+    clearBlog();
     const act=[];
     for(let i=0;i<4;i++){ const u=state.rowF[i]; if(u) act.push({u, side:'ally'}); }
     for(let i=0;i<4;i++){ const u=state.rowB[i]; if(u) act.push({u, side:'ally'}); }
@@ -211,9 +227,11 @@ html,body{height:100%;margin:0;background:var(--bg);color:var(--text);
     party.forEach(p=>p.u.hp=Math.min(p.u.maxhp+5,p.u.hp+5));
     const base = ENEMIES[(state.wave-1)%ENEMIES.length];
     const mobs=[]; for(let i=0;i<base.count;i++){ const mh=Math.round(base.hp*(1+0.18*(state.wave-1))); mobs.push({name:base.name, side:'enemy', hp:mh, maxhp:mh, atk:Math.round(base.atk*(1+0.12*(state.wave-1))), spd:base.spd, next:base.spd*PACE}); }
-    const battle={party,mobs,poison:base.poison||0, t:0, dt:0.08, speed:1, running:true};
+    battle={party,mobs,poison:base.poison||0, t:0, dt:0.08, speed:1, running:true, result:null};
     document.getElementById('bwavenum').textContent=state.wave;
-    renderField(battle); document.getElementById('prep').style.display='none'; document.getElementById('battle').style.display='block';
+    renderField(battle);
+    document.getElementById('prep').style.display='none'; document.getElementById('battle').style.display='block';
+    blog(`▶ Wave ${state.wave}: ${base.name} appear.`,'notice');
     loop(battle);
   }
   function renderField(b){
@@ -230,22 +248,37 @@ html,body{height:100%;margin:0;background:var(--bg);color:var(--text);
     for(let i=0;i<4;i++){ const p=b.party[i]; if(p){ const d=cell(p.u.name,p.u.hp,p.u.maxhp,'ally'); p._=d; aline.appendChild(d.c);} else { const e=document.createElement('div'); e.className='cell'; aline.appendChild(e);} }
   }
   function pickAlive(arr){ const alive=arr.filter(x=>x.hp>0); return alive.length?alive[Math.floor(rand()*alive.length)]:null; }
+
+  function endBattle(victory){
+    battle.running=false;
+    battle.result = victory? 'win':'loss';
+    document.getElementById('bcontinue').disabled = false;
+    if(victory){
+      blog('Victory! +5 gold. Tap Continue to return to prep.','win');
+    }else{
+      blog('Defeat... Tap Continue to return to prep.','loss');
+    }
+  }
+
   function loop(b){
     if(!b.running) return;
     const step = b.dt*b.speed; b.t+=step;
+
     if(b.poison && Math.floor(b.t)%3===0 && Math.abs(b.t-Math.floor(b.t))<1e-9){
       b.party.forEach(p=>{ if(p.u.hp>0){ p.u.hp-=b.poison; if(p._) p._.fill.style.width=Math.round(100*p.u.hp/p.u.maxhp)+'%'; } });
+      blog(`Poison clouds tick for ${b.poison} damage.`);
     }
+
     for(const p of b.party){
       if(p.u.hp<=0) continue;
       p.next -= step;
       if(p.next<=0){
         if(p.u.heal){
           const tgt=b.party.reduce((a,c)=> (c.u.hp>0 && (!a||c.u.hp<a.u.hp))?c:a, null);
-          if(tgt){ tgt.u.hp=Math.min(tgt.u.maxhp, tgt.u.hp + p.u.heal); if(tgt._) tgt._.fill.style.width=Math.round(100*tgt.u.hp/tgt.u.maxhp)+'%'; }
+          if(tgt){ const pre=tgt.u.hp; tgt.u.hp=Math.min(tgt.u.maxhp, tgt.u.hp + p.u.heal); if(tgt._) tgt._.fill.style.width=Math.round(100*tgt.u.hp/tgt.u.maxhp)+'%'; const amt=tgt.u.hp-pre; blog(`${p.u.name} heals ${tgt.u.name} for ${amt}.`); }
         }else{
           const t=pickAlive(b.mobs);
-          if(t){ let dmg=p.u.atk; if(p.u.backstab) dmg=Math.round(dmg*1.2); t.hp-=dmg; if(t._) t._.fill.style.width=Math.round(100*t.hp/t.maxhp)+'%'; if(p._) { p._.spr.classList.add('flash'); setTimeout(()=>p._&&p._.spr.classList.remove('flash'),220); } }
+          if(t){ let dmg=p.u.atk; if(p.u.backstab) dmg=Math.round(dmg*1.2); if(p.u.splash){ const other=pickAlive(b.mobs.filter(m=>m!==t)); t.hp-=dmg; if(other) other.hp-=Math.floor(dmg*0.5); if(t._) t._.fill.style.width=Math.round(100*t.hp/t.maxhp)+'%'; if(other&&other._) other._.fill.style.width=Math.round(100*other.hp/other.maxhp)+'%'; blog(`${p.u.name} hits ${t.name} for ${dmg}` + (other?` and splashes another for ${Math.floor(dmg*0.5)}`:'' ) + '.'); } else { t.hp-=dmg; if(t._) t._.fill.style.width=Math.round(100*t.hp/t.maxhp)+'%'; blog(`${p.u.name} hits ${t.name} for ${dmg}.`); } if(p._){ p._.spr.classList.add('flash'); setTimeout(()=>p._&&p._.spr.classList.remove('flash'),220); } }
         }
         p.next += p.u.spd*PACE;
       }
@@ -255,20 +288,15 @@ html,body{height:100%;margin:0;background:var(--bg);color:var(--text);
       m.next -= step;
       if(m.next<=0){
         const tgt = pickAlive(b.party.map(x=>x.u));
-        if(tgt){ tgt.hp-=m.atk; const wrap=b.party.find(pp=>pp.u===tgt); if(wrap && wrap._) wrap._.fill.style.width=Math.round(100*wrap.u.hp/wrap.u.maxhp)+'%'; }
+        if(tgt){ tgt.hp-=m.atk; const wrap=b.party.find(pp=>pp.u===tgt); if(wrap && wrap._) wrap._.fill.style.width=Math.round(100*wrap.u.hp/wrap.u.maxhp)+'%'; blog(`${m.name} hits ${tgt.name} for ${m.atk}.`); }
         m.next += m.spd*PACE;
       }
     }
+
     b.mobs=b.mobs.filter(m=>m.hp>0);
     const partyAlive=b.party.some(p=>p.u.hp>0), mobsAlive=b.mobs.length>0;
     if(!partyAlive || !mobsAlive || b.t>120){
-      b.running=false;
-      const victory = (!mobsAlive && partyAlive);
-      // reward + reset
-      if(victory){ state.wave += 1; state.gold += 5; for(const u of [...state.rowF,...state.rowB].filter(Boolean)){ u.hp=Math.max(u.hp, Math.floor(u.maxhp*0.7)); } dmsg(`Victory! +5g. Wave ${state.wave}`, 'ok'); }
-      else { dmsg('Defeat... adjust and try again', 'warn'); }
-      document.getElementById('battle').style.display='none'; document.getElementById('prep').style.display='block';
-      renderPrep(); rollShop();
+      endBattle(!mobsAlive && partyAlive);
       return;
     }
     requestAnimationFrame(()=>loop(b));
@@ -279,14 +307,26 @@ html,body{height:100%;margin:0;background:var(--bg);color:var(--text);
     document.getElementById('reroll').onclick=()=>{ if(state.gold<2){ dmsg('Not enough gold', 'warn'); return; } state.gold-=2; state.locked=false; rollShop(); renderPrep(); dmsg('Shop rerolled', 'ok'); };
     document.getElementById('lock').onclick=()=>{ state.locked=!state.locked; dmsg(state.locked?'Shop locked':'Shop unlocked', 'ok'); };
     document.getElementById('level').onclick=()=>{ if(state.gold<state.levelCost){ dmsg(`Need ${state.levelCost}g`, 'warn'); return; } state.gold-=state.levelCost; state.level+=1; state.cap=Math.min(6,state.cap+1); state.levelCost+=2; renderPrep(); dmsg(`Level ${state.level} (cap ${state.cap})`, 'ok'); };
-    document.getElementById('start').onclick=()=>{ toBattle(); };
+    document.getElementById('start').onclick=()=>{ document.getElementById('bcontinue').disabled = true; toBattle(); };
     document.getElementById('spawn').onclick=()=>{ state.rowF=[makeUnit('K'),null,null,null]; state.rowB=[null,makeUnit('A'),null,null]; state.bench=[makeUnit('H'),null,null,null,null]; renderPrep(); dmsg('Starter units spawned', 'ok'); };
+    document.getElementById('bquit').onclick=()=>{ document.getElementById('battle').style.display='none'; document.getElementById('prep').style.display='block'; dmsg('Exited battle early', 'warn'); };
+    document.getElementById('bspeed').onclick=()=>{ /* simple toggle */ };
+    document.getElementById('bcontinue').onclick=()=>{
+      // Apply victory/defeat results and return
+      const victory = (battle && battle.result==='win');
+      if(victory){
+        state.wave += 1; state.gold += 5;
+        for(const u of [...state.rowF,...state.rowB].filter(Boolean)){ u.hp = Math.max(u.hp, Math.floor(u.maxhp*0.7)); }
+      }
+      renderPrep(); rollShop();
+      document.getElementById('battle').style.display='none'; document.getElementById('prep').style.display='block';
+      dmsg(victory?`Victory! +5g. Wave ${state.wave}`:'Defeat... Try again', victory?'ok':'warn');
+    };
   }
 
   function safeInit(){
     try{
       wire();
-      // spawn default starters
       state.rowF[0]=makeUnit('K'); state.rowB[1]=makeUnit('A'); state.bench[0]=makeUnit('H');
       renderPrep(); rollShop();
       dmsg('Init OK — ready', 'ok');
@@ -295,7 +335,6 @@ html,body{height:100%;margin:0;background:var(--bg);color:var(--text);
     }
   }
 
-  // Ensure init even if HTML is parsed before script
   if(document.readyState==='complete' || document.readyState==='interactive'){ setTimeout(safeInit, 0); }
   else { document.addEventListener('DOMContentLoaded', safeInit); }
   window.addEventListener('error', (e)=>{ dmsg('Runtime error: '+e.message, 'err'); });
