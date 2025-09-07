@@ -3,118 +3,106 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no" />
-<title>Autobattler — Sprites & Slow Combat</title>
+<title>Autobattler — Retro Paper</title>
 <style>
-:root{
-  --bg:#0b0b0b;--panel:#151515;--text:#eaeaea;--muted:#9aa0a6;
-  --slot:#1f1f1f;--grid:#2a2a2a;--sel:#3b82f6;--hp:#22c55e;--hpbg:#3a3a3a;
-  --enemy:#b45309; --ally:#2563eb; --win:#34d399; --loss:#ef4444; --notice:#fbbf24;
-}
-html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,system-ui,Segoe UI,Roboto,Arial,sans-serif}
+html,body{height:100%;margin:0;background:rgb(232,216,184);color:rgb(44,44,44);
+  font-family: -apple-system, system-ui, ui-sans-serif, Arial, sans-serif}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-.panel{background:var(--panel);border:1px solid #222;border-radius:12px;padding:10px 12px;margin:10px 14px}
-.btn{background:#1e1e1e;border:1px solid #333;color:#eaeaea;border-radius:10px;padding:12px 14px;text-align:center;user-select:none}
+.h2{font-weight:800;letter-spacing:1px;text-transform:uppercase}
+.panel{background:rgb(49,67,86);border:3px solid rgb(44,44,44);border-radius:6px;padding:10px 12px;margin:12px 14px;color:#f2f2f2}
+.subtle{opacity:.9}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:8px 0}
+.grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:8px 0}
+.slot{position:relative;background:rgb(58,80,99);border:2px solid rgb(44,44,44);border-radius:4px;min-height:64px;display:grid;place-items:center;overflow:hidden}
+.slot.sel{outline:3px solid #eab308; outline-offset:2px;}
+.badge{font:11px ui-monospace,Menlo,Consolas,monospace;color:rgb(44,44,44);background:#f4e3b6;border:2px solid rgb(44,44,44);padding:2px 6px;border-radius:4px}
+.hpbar{position:absolute;left:6px;right:6px;bottom:6px;height:6px;background:#2a3744;border:2px solid rgb(44,44,44);border-radius:4px;overflow:hidden}
+.hpfill{height:100%;background:#35c36b}
 .row{display:flex;gap:8px;align-items:center;justify-content:space-between}
-.small{font-size:12px;color:var(--muted)}
-.board{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:8px 0}
-.slot{position:relative;background:var(--slot);border:1px dashed var(--grid);border-radius:10px;min-height:64px;display:grid;place-items:center;padding:6px;overflow:hidden}
-.slot.sel{outline:2px solid var(--sel); outline-offset:2px;}
-.unit{display:grid;gap:2px;place-items:center}
-.badge{font:11px ui-monospace,Menlo,Consolas,monospace;color:#111;background:#4dabf7;padding:1px 6px;border-radius:999px}
-.hpbar{position:absolute;left:6px;right:6px;bottom:6px;height:6px;background:var(--hpbg);border-radius:6px;overflow:hidden}
-.hpfill{height:100%;background:var(--hp);}
-.shop{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0}
-.controls{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
-#diag{position:fixed;left:10px;right:10px;bottom:10px;background:#111;border:1px solid #333;border-radius:10px;padding:8px 10px;font:12px ui-monospace,Menlo,Consolas,monospace}
-.ok{color:#34d399} .warn{color:#f59e0b} .err{color:#ef4444}
+.btn{background:#f4e3b6;color:rgb(44,44,44);border:3px solid rgb(44,44,44);border-radius:6px;padding:10px 12px;font-weight:700}
+.btn:active{transform:translateY(1px)}
+.small{font-size:12px;opacity:.9}
+#prep .title{display:flex;align-items:center;justify-content:space-between}
 #battle{display:none}
-.grid2{display:grid;gap:8px}
 .line{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.cell{position:relative;height:104px;background:#111;border:1px solid #222;border-radius:10px;display:grid;place-items:center;overflow:hidden;margin:6px 0}
-.name{position:absolute;top:4px;left:6px;font-size:11px;color:#ddd;opacity:0.9}
-.cell .hpbar{position:absolute;left:6px;right:6px;bottom:6px;height:6px;background:#1e1e1e;border-radius:6px;overflow:hidden}
-.cell .hpfill{height:100%;background:var(--hp)}
+.cell{position:relative;height:104px;background:rgb(58,80,99);border:2px solid rgb(44,44,44);border-radius:6px;display:grid;place-items:center;overflow:hidden;margin:6px 0}
+.name{position:absolute;top:4px;left:6px;font-size:11px;color:#f2f2f2;opacity:0.9}
 .sprite{width:64px;height:64px;image-rendering: pixelated;display:block;background-size:auto 64px;background-repeat:no-repeat}
-.log{font:12px ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;line-height:1.35;max-height:32vh;overflow:auto;background:#0f0f0f;border:1px solid #222;border-radius:10px;padding:10px;margin-top:8px}
-.win{color:var(--win)} .loss{color:var(--loss)} .notice{color:var(--notice)}
+.log{font:12px ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;line-height:1.35;max-height:30vh;overflow:auto;background:#0f0f0f;color:#f2f2f2;border:3px solid rgb(44,44,44);border-radius:6px;padding:10px;margin-top:8px}
+.win{color:#34d399} .loss{color:#ef4444} .notice{color:#fbbf24}
+.diag{position:fixed;left:10px;right:10px;bottom:10px;background:#0f0f0f;color:#d1fae5;border:3px solid rgb(44,44,44);border-radius:6px;padding:8px 10px;font:12px ui-monospace,Menlo,Consolas,monospace;opacity:.9}
 </style>
 </head>
 <body>
 
 <div id="prep">
   <div class="panel">
-    <div class="row">
+    <div class="title">
       <div>
-        <h2 style="margin:0">Autobattler — Prep</h2>
-        <div class="small">Tap unit → tap slot to move/swap • Merges on 3 copies • Level up to field more units</div>
+        <div class="h2">Enemy Preview</div>
+        <div class="small subtle" id="enemyPrev"></div>
       </div>
-      <div class="small">Gold: <span id="gold">0</span> • Level: <span id="lvl">0</span> • Units max: <span id="cap">0</span></div>
+      <div class="small subtle">Gold: <span id="gold">0</span> • Level: <span id="lvl">0</span> • Units max: <span id="cap">0</span></div>
     </div>
-    <div class="board" id="rowF"></div>
-    <div class="board" id="rowB"></div>
-    <div class="row">
-      <div class="small" id="enemyPrev"></div>
-      <div class="small">Relics: <span id="relics">Shield @ start</span></div>
-    </div>
-    <div class="board" id="bench" style="grid-template-columns:repeat(5,1fr)"></div>
+    <div class="h2" style="margin-top:6px">Board</div>
+    <div class="grid4" id="rowF"></div>
+    <div class="grid4" id="rowB"></div>
+    <div class="h2">Bench</div>
+    <div class="grid5" id="bench"></div>
   </div>
 
   <div class="panel">
-    <div class="row"><strong>Shop</strong> <span class="small">(tap to buy → bench)</span></div>
-    <div class="shop" id="shop"></div>
-    <div class="controls">
-      <div class="btn" id="spawn">Spawn Starter</div>
-      <div class="btn" id="reroll">Reroll (2g)</div>
-      <div class="btn" id="level">Level Up (4g)</div>
-      <div class="btn" id="start">Start Battle</div>
-      <div class="btn" id="lock">Lock Shop</div>
+    <div class="h2">Shop</div>
+    <div class="grid4" id="shop"></div>
+    <div class="row">
+      <button class="btn" id="reroll">Reroll (2g)</button>
+      <button class="btn" id="level">Level Up (4g)</button>
+      <button class="btn" id="start">Start Battle</button>
+      <button class="btn" id="lock">Lock Shop</button>
+      <button class="btn" id="spawn">Spawn Starter</button>
     </div>
   </div>
 </div>
 
 <div id="battle">
-  <div class="panel grid2">
+  <div class="panel">
     <div class="row">
-      <div><strong>Battle</strong> • Wave <span id="bwavenum">1</span></div>
-      <div class="small">
+      <div class="h2" style="color:#f2f2f2">Battle • Wave <span id="bwavenum">1</span></div>
+      <div class="row">
         <button class="btn" id="bspeed">0.5x</button>
         <button class="btn" id="bquit">Back</button>
         <button class="btn" id="bcontinue" disabled>Continue</button>
       </div>
     </div>
-
-    <div class="small">Enemies</div><div class="line" id="eline"></div>
-    <div class="small">Allies</div><div class="line" id="aline"></div>
-    <div>
-      <div class="row"><strong>Battle Log</strong></div>
-      <div class="log" id="blog"></div>
-    </div>
+    <div class="small subtle" style="color:#f2f2f2;margin:6px 0">Enemies</div><div class="line" id="eline"></div>
+    <div class="small subtle" style="color:#f2f2f2;margin:6px 0">Allies</div><div class="line" id="aline"></div>
+    <div class="h2" style="color:#f2f2f2;margin-top:8px">Battle Log</div>
+    <div class="log" id="blog"></div>
   </div>
 </div>
 
-<div id="diag"><span class="ok">Init: pending…</span></div>
+<div id="diag" class="diag">Init: pending…</div>
 
 <script>
-const EMBED_SPRITES = {"Knight": {"idle": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABZ0lEQVR4nO3bO04DMRAAUAdQJGousBeipKJBcK5ENFSUXGgvQI0UCYUC8UmkhN3IXq+Z99qsPNbEo3i8TkoAAAAAAMB/tSgw5mrAMw8F4vJJ/ke4KDHodru9P/TZYrFYl4iZUfMLSP6HK1IArWt8ATVvyvyf5RwMWqMACE0BEFrOHuC7eRmwT/t6dtbNZGPk/wQ5j0FXd0+bg83Lvsfb5TrN6wsYcvqwb1bzl//xnAL9csICIqMa+dcDEJoCIDQFQGiT9wCvy/eUUkrXz2/3KaWje76Xm8sSd5VCk/9dmuCRLKC6cuffFojQJv8FuNqcp5RmeQ4dgvzvsgUayQKqK3f+bYEITQEQmgIgNAVAaAqA0LKeArkhWZf8j+dN5Y/W/w/QOvkHAJjGmB6gKzWJI/oKMeeqqxCzrxBzUpHuAnUVYvYVYs5VVyFm/9cD3gMQmgIgtDFboL7UJBikrz0BAAAAAACAlnwAYrda41KSwzEAAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 6}, "attack": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABJUlEQVR4nO3bMU7DQBAF0DVCSLmFL0SZigaFcxHRUKXMhXwLJBpTIJqIoEUaWxPPe62jsX/xtd610hoAAAAAALBVQ+Cs147fvATebwky5LBahvuIIT/meT5cuzYMwzHyXkuRIYe1MtxFDYJbpACUpgCUpgCUFnEK1LNjv5TtFEKGHFbPEHIK9Pz+eXXHfunt6SHlKYQMOaydwSsQpSkApYV+COvxePo4tNa6lrnzfhf5pTqMDDlEZLACUJoCUNrqr0Dn/e7Y8h2//YsMOURksAJQmgJQmgJQmgJQmgJQmgJQmgJQmgJQmv8DfJMhhy1kAAAAEuvZBI9LP8QvpuB5Y/C8HlPwvDF4Xo8peN4YPK/H9NdFx6CUpgCUpgAAAAAAAAAAW/MFBIxHl3BBlb8AAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 8}, "death": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABa0lEQVR4nO3cPU7DMBiAYQdQJWYukAsxMrEgOBeIhYmRC+UCzEiVUJkotFJ/LDlxnO951kZ2lre2k6opAQAAAAAAS9WNMObzGdc8jTAvZLsaY9DNZvN46LOu617GmLMgAQcySgCtE3AcAlggAZ9PAMzOlAFflBwMWlNyBdguXWdU+nutvShVFd0CPbytDy5d+17vV3Pbiwo4IGeAfwQcjwAWRMD5BMBs1AjYUyBCm3wF+Fx9p5RSun3/ekwpHS3+4+56jN8qwZYtUCYBL4sAghHwrskDuFlfppS2h5jwj+HIUzpgK0AmAS+LAIIR8C4B0JTSAXsPQGgCIDQBEFrRM8AMf2AFR5UMoPknCgKOx1OgPwIOaPGvumnGOf8Gsa/5Ly2oKmcF6Me6iSOGCnMSSKQzQF9hzqHCnGSIFEDr+gpzDhXmnJQAmEpfYc7h1AU5AZwcDFoTaQUYat8A8xMpgNYNtW8AAAAAANr0Ay7eXckDi2XFAAAAAElFTkSuQmCC", "w": 48, "h": 48, "frames": 4, "fps": 8}}, "Archer": {"idle": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABZElEQVR4nO3bPU7DMBQAYAexoIqNA+RCjEjM5VztjMTIhXIANtS5DIifVmpJKjuOed+3NvKzXv1UP8dNCQAAAAAA+K+6AmNuRjzzVCAun+R/gusSg+73+/Wpz7qu25aImVHzC0j+xytSAK1rfAE1b878X+UcDFqjAAhNARBazh7gu3kZsU/7enbRzWRj5P8COY9BN7vt6mTzcmy13m3Tsr6AMacPxxY1f/mfzinQLxcsIDKqkX89AKEpAEJTAIQ2ew/wePuWUkrp/iWtU0pn93yvDzcl7iqFJv+HNMETWUB15c6/LRChzf4L8Px+l1Ja5Dl0CPJ/yBZoIguortz5twUiNAVAaAqA0BQAoSkAQst6CuSGZF3yP503lT9a/z9A6+QfAGAeU3qAvtQkzhgqxFyqvkLMoULMWUW6C9RXiDlUiLlUfYWYw18PeA9AaAqA0KZsgYZSk2CUofYEAAAAAAAAWvIBVWlZTdPunSUAAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 6}, "attack": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABIUlEQVR4nO3bMU7DQBAF0DWiiXIJX4gyFzDnwhegzIV8iYjSFIgmImiRxtbgea91NPYvvta7VloDAAAAAACOagic9dbxm9fA+21Bhhx2y/AcMeTbuq7To2vDMMyR99qKDDnsleEpahD8RwpAaQpAaQpAaRGnQD079nvZTiFkyGH3DCGnQLf5/HDHfu883VKeQsiQw94ZvAJRmgJQWuiHsB4v7x9Ta61rmbteTpFfqsPIkENEBisApSkApe3+CnS9nOaW7/jtT2TIISKDFYDSFIDSFIDSFIDSFIDSFIDSFIDSFIDS/B/giww5HCEDAACQWM8meNz6IX6wBM8bg+f1WILnjcHzeizB88bgeT2W3y46BqU0BaA0BQAAAAAAAAA4mk/BzUeX4gQGKQAAAABJRU5ErkJggg==", "w": 48, "h": 48, "frames": 4, "fps": 8}, "death": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABaElEQVR4nO3cMU7DMBiAUQexoIqNA+RCjEjM5Vx0RmLkQjkAG+pcJgpFahtLThznf29tZGf5ajupmhIAAAAAALBW3QRjvo645mWCeSHb7RSDHg6H7bnPuq7bTTFnQQIOZJIAWifgOASwQgIeTwAszpwB35QcDFpTcgU4Ll0jKv251l6Uqopugfa7zdml67/Ndr+0vaiAA3IG+EPA8QhgRQScTwAsRo2APQUitNlXgOf7z5RSSo/vaZtSulj8x9PdFL9VgiNboEwCXhcBBCPgU7MH8Pb1kFI6HmLCP4YjT+mArQCZBLwuAghGwKcEQFNKB+w9AKEJgNAEQGhFzwAL/IEVXFQygOafKAg4Hk+Bfgk4oNW/6qYZY/4N4r/mv7SgqpwVoJ/qJi4YKsxJIJHOAH2FOYcKc5IhUgCt6yvMOVSYc1YCYC59hTmHaxfkBHB1MGhNpBVgqH0DLE+kAFo31L4BAAAAAGjTN9geXJQxLB4UAAAAAElFTkSuQmCC", "w": 48, "h": 48, "frames": 4, "fps": 8}}, "Healer": {"idle": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABa0lEQVR4nO3bvU3DQBQA4AuioUGM4EWomYAFwg5pES07JAtQUlGziEdALBAKxE8iJdjRnc/H+74qUiy/08s95d75nBIAAAAAAPBfLQrccz3gmrsCcfkk/yOcl7jpdrtdHvpusVhsSsTMqPkJJP/DFSmA1jU+gZo3Zf7Pct4MWqMACE0BEFrOHuC7eRmwTvu6dtbNZGPk/wQ5t0HXVy8PB5uXfW8395s0rx9gyO7DvlmNX/7Hswv0ywkTiIxq5F8PQGgKgNAUAKFN3gNcv68+Pzytlimlo2u+59uLEmeVQpP/XZrgkUygunLn3xKI0Cb/B3i9fEwpzXIfOgT532UJNJIJVFfu/FsCEZoCIDQFQGgKgNAUAKFl3QVyQrIu+R/Pk8ofrb8P0Dr5BwCYxpgeoCs1iCP6CjHnqqsQs68Qc1KRzgJ1FWL2FWLOVVchZv/XBZ4DEJoCILQxS6C+1CAYpK89AAAAAAAAgJZ8AC2cW+mbxHp3AAAAAElFTkSuQmCC", "w": 48, "h": 48, "frames": 4, "fps": 6}, "attack": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABKElEQVR4nO3bMU7DQBAF0DWiSccRfBuqlLlAOAjiIOQClKlyGx+BjtIUiCYiaJHG1uB5r3U09i++1rtWWgMAAAAAALZqCJz12vGbp8D7LUGGHFbLcB8x5Ns8z8db14ZhOEXeayky5LBWhruoQfAfKQClKQClKQClRZwC9ezYr2U7hZAhh9UzhJwCPVxebu7Yr70/Pqc8hZAhh7UzeAWiNAWgtNAPYT32bx/H1lrXMnc+7CK/VIeRIYeIDFYASlMASlv9Feh82J1avuO3P5Ehh4gMVgBKUwBKUwBKUwBKUwBKUwBKUwBKUwBK83+ALzLksIUMAABAYj2b4HHph/jBFDxvDJ7XYwqeNwbP6zEFzxuD5/WYfrvoGJTSFIDSFAAAAAAAAABgaz4BiA1HlxaycyQAAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 8}, "death": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABb0lEQVR4nO3csU3DQBiA0QuioUGM4EWomYAFwg60iJYdYAFKKmoW8QiIBUKBCCRSEp909vn8v1dFiuVz8+V8ZyspAQAAAAAAS7Ua4ZzPA465G2FcyHY+xkk3m8360Her1epljDELEnAgowTQOgHHIYAFEvBwAmB2pgz4rOTJoDUlZ4Dt1DWg0t9j3YtSVdFboKv3x4NT177Pm4e53YsKOCBrgH8EHI8AFkTA+QTAbNQI2C4QoU0+A1x/3f98eL1fp5SOFv92ezHGu0qw5RYok4CXRQDBCHjX5AF8XD6llLaLmPDbcOQpHbAZIJOAl0UAwQh4lwBoSumAPQcgNAEQmgAIregaYIYvWMFRJQNofkdBwPHYBfoj4IAW/6ibZgz5N4h9zf9oQVU5M0A31kUc0VcYk0AirQG6CmP2FcYkQ6QAWtdVGLOvMOakBMBUugpj9qcOyAng5MmgNZFmgL72BTA/kQJoXV/7AgAAAACgTd9Ek1+EjXQHDgAAAABJRU5ErkJggg==", "w": 48, "h": 48, "frames": 4, "fps": 8}}, "Assassin": {"idle": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABaUlEQVR4nO3bO04DMRAAUC+ioeQGuQ0VJS1FoKflCGnpSQquQMVt9gYcIRSITyIl7Eb2es2812blsSYexeN1UgIAAAAAAP6rrsCY6wHP3BWIyyf5H+G8xKDb7XZ56LOu6zYlYmbU/AKS/+GKFEDrGl9AzZsy/2c5B4PWKABCUwCElrMH+G5eBuzTvp6ddTPZGPk/Qc5j0PX71cPB5mXf5dvTJs3rCxhy+rBvVvOX//GcAv1ywgIioxr51wMQmgIgNAVAaJP3ALf3q5RSStf3q2VK6eie7/XmosRdpdDkf5cmeCQLqK7c+bcFIrTJfwFenh9TSrM8hw5B/nfZAo1kAdWVO/+2QISmAAhNARCaAiA0BUBoWU+B3JCsS/7H86byR+v/B2id/AMATGNMD7AoNYkj+gox52pRIWZfIeakIt0FWlSI2VeIOVeLCjH7vx7wHoDQFAChjdkC9aUmwSB97QkAAAAAAAC05APh01onwHw2FAAAAABJRU5ErkJggg==", "w": 48, "h": 48, "frames": 4, "fps": 6}, "attack": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABKElEQVR4nO3bsU3DQBQG4DOiSckG3oYqZRYIAzALA5AFKFNlG29ASWkKRBMRdEjP1sPv+1pHz/6LX+c7K60BAAAAAABbNQTOeu34zVPg/ZYgQw6rZbiPGPJtnufjrWvDMJwi77UUGXJYK8Nd1CD4jxSA0hSA0hSA0iJOgXp27NeynULIkMPqGUJOgd4fn2/u2K89XF5SnkLIkMPaGbwCUZoCUFroh7Ae+7ePY2uta5k7H3aRX6rDyJBDRAYrAKUpAKWt/gp0PuxOLd/x25/IkENEBisApSkApSkApSkApSkApSkApSkApSkApfk/wBcZcthCBgAAILGeTfC49EP8YAqeNwbP6zEFzxuD5/WYgueNwfN6TL9ddAxKaQpAaQoAAAAAAAAAsDWfxp1HlwR+q48AAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 8}, "death": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABbUlEQVR4nO3csVHDMBiAUZmjoWSDbENFSUsR6GkZIS09ULACFdt4A0YIFYHkLol1J1uW//fa+CQ3XyTZuaQEAAAAAAAsVTfCmG8DrnkYYV7IdjnGoNvtdn3ss67r3seYsyABBzJKAK0TcBwCWCABDycAZmfKgC9KDgatKbkC7JauAZX+XmsvSlVFt0DfN09Hl65D118vc9uLCjggZ4B/BByPABZEwPkEwGzUCNhTIEKbfAW4f9yklFK6fdysU0oni/+8uxrjt0qwYwuUScDLIoBgBLxv8gA+Xp9TSrtDTPjHcOQpHbAVIJOAl0UAwQh4nwBoSumAvQcgNAEQmgAIregZYIY/sIKTSgbQ/BMFAcfjKdAfAQe0+FfdNGPIv0Ecav5LC6rKWQFWY93ECX2FOQkk0hlgVWHOvsKcZIgUQOtWFebsK8w5KQEwlVWFOftzF+QEcHYwaE2kFaCvfQPMT6QAWtfXvgEAAAAAaNMPd9ZdZ9RxVREAAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 8}}, "Mage": {"idle": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABZklEQVR4nO3bS07DMBAAUAcQErfIhViygCWcgVNwhnYJC5ZcKLdAQkJlgfi0UktS2XHMvLdt5LGmHtXjuCkBAAAAAAD/VVdgzNWIZ+4KxOWT/E9wVmLQzWZzu++zruvWJWJm1PwCkv/xihRA6xpfQM2bM/8nOQeD1igAQlMAhJazB/huXkbs076eXXQz2Rj5P0LOY9DV08Pb3uZl1/X9+Tot6wsYc/qwa1Hzl//pnAL9csQCIqMa+dcDEJoCIDQFQGiz9wCP/XtKKaXL59fblNLBPd/L1UWJu0qhyf82TfBEFlBdufNvC0Ros/8C3AynKaVFnkOHIP/bbIEmsoDqyp1/WyBCUwCEpgAITQEQmgIgtKynQG5I1iX/03lT+aP1/wO0Tv4BAOYxpQfoS03igKFCzKXqK8QcKsScVaS7QH2FmEOFmEvVV4g5/PWA9wCEpgAIbcoWaCg1CUYZak8AAAAAAACgJR/jE1nVFa7iegAAAABJRU5ErkJggg==", "w": 48, "h": 48, "frames": 4, "fps": 6}, "attack": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABJ0lEQVR4nO3bMU7DQBAF0DWKkHILX4gyBW04A6fgDKSlSJkL+RZINKZANBFBizS2Bs97raOxf/G13rXSGgAAAAAAsFVD4KzXjt88Bd5vCTLksFqGXcSQb/M8H29dG4bhFHmvpciQw1oZ7qIGwX+kAJSmAJSmAJQWcQrUs2O/lu0UQoYcVs8Qcgr09vJxc8d+7fH5PuUphAw5rJ3BKxClKQClhX4I6/Fwfj+21rqWucthH/mlOowMOURksAJQmgJQ2uqvQJfD/tTyHb/9iQw5RGSwAlCaAlCaAlCaAlCaAlCaAlCaAlCaAlCa/wN8kSGHLWQAAAAS69kEj0s/xA+m4Hlj8LweU/C8MXhejyl43hg8r8f020XHoJSmAJSmAAAAAAAAAABb8wkjfEeX0/CAGQAAAABJRU5ErkJggg==", "w": 48, "h": 48, "frames": 4, "fps": 8}, "death": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABa0lEQVR4nO3cMU7DMBiAUQcQErfIhRgZYIQzcArOACMMjFwot0BCQmWi0EptY8mJ4/zvrY3sLF9tJ1VTAgAAAAAA1qqbYMznEdc8TDAvZLuYYtDNZnN/6LOu616mmLMgAQcySQCtE3AcAlghAY8nABZnzoDPSg4GrSm5AmyXrhGV/l5rL0pVRbdAb09fB5eufbePl0vbiwo4IGeAfwQcjwBWRMD5BMBi1AjYUyBCm30FeO2/U0opXb9/3qeUjhb/cXM1xW+VYMsWKJOA10UAwQh41+wB3A3nKaXtISb8YzjylA7YCpBJwOsigGAEvEsANKV0wN4DEJoACE0AhFb0DLDAH1jBUSUDaP6JgoDj8RToj4ADWv2rbpox5t8g9jX/pQVV5awA/VQ3ccRQYU4CiXQG6CvMOVSYkwyRAmhdX2HOocKcsxIAc+krzDmcuiAngJODQWsirQBD7RtgeSIF0Lqh9g0AAAAAQJt+AA8vXI6QkOBcAAAAAElFTkSuQmCC", "w": 48, "h": 48, "frames": 4, "fps": 8}}};
+const SPRITES = {"Knight": {"idle": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABX0lEQVR4nO3av03DQBQH4AOxAQVNFkByRc0GSIgFkFKzCQtQR2IBRMUA1FSWmIIZQpHKiMixffbZft/XWYn/5Jd78r2zUwIAAAAAANbqLPcBq6rat32nruvs5+VA/t1cjHHQr8+3o5/d3D6Mccps1jCA5H+6UQpg6ZY8gNZgyvzPsx4NFkYBEJoCILTBPcB/TUvbPO3vPnNvKudM/sMM/uFVVe2326fe++92L0X/gFNWHdqUvn75979+q0AppaEDiGFK5q8HIDQFQGgKgNAm7wEer9+b28+blNKm0Qhd3X2EXZUYm/ybNMEdGUBl5c7fFIjQJr8DvH7fN7ZLr0NHI/8mU6CODKCycudvCkRoCoDQFAChKQBCUwCElmUVyBuRZcm/v/DLd6XfR49O/gAAk+syd7oc7SqO+ylwzrmS/wgivQtkAJU1y/w9ByA0BUBoXaZAbudlyR8AAAAAAKCDX2TagIG2/YqrAAAAAElFTkSuQmCC", "w": 48, "h": 48, "frames": 4, "fps": 6}, "attack": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABKklEQVR4nO3bsU3DQBQG4AOxAQVNFojkipoNkBALIKXOJixAHYkFEBUDUFNZYgpmgMJKhSCW/exc/L6vcZH4Ln/xy3dnpRQAAAAAAGCpzqIGaprm+9B32rYNm28KMtRhzgwXEYPsfby//PnZ9c195FSTkaEOc2U4DxsJTpACkJoCkJoCkNrgnXSfnfohxz6NkKGTOcOoU6DNZjv43t3uaczUYWTIncESiNQUgNRCX4T18bB+7a6Pq1LK6t+139XtW5VvLGWoQ0QGTwBSUwBSm30J9Px5V0rpdu7HPn4bSoY6RGTwBCA1BSA1BSA1BSA1BSA1BSA1BSA1BSA1/wcYSYbxlpABAAA4DX02DpeT/4rfvoLHk2GYxWdwDEpqCkBqCgAAAAAAAACwND9YcnZnHsmjWwAAAABJRU5ErkJggg==", "w": 48, "h": 48, "frames": 4, "fps": 8}, "death": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABZElEQVR4nO3cvU3DQBiAYYPYgIImCyC5omYDJMQCSKnZhAVSW2IBRMUA1FSWmIIZoDYhSnw527n7nqezEv9I0es7X6I0DQAAAAAAUKuz3Ads2/Zn33v6vs9+XkhxMcVBPz9ed752c/swxSmzEXAskwRQOgHHIYAKCfhwAuDkzBnwedajQWGOHgH+G7L2Vfp3H3NSlpJlCrRePyXv23WbHJeQTMCxeQZoBBw5YAFUQMDpAQuAxS0ZsFUgQpt9BHi8fhtuP6+aplkNhrSru/ewc1LmZQo0koDrIoBgBDw0ewAvX/eD7a7bhF6GY5zcARsBRhJwXQQQjICHBEBRcgfsewBCEwChCYDQsjwDLP2DKkh1dAA1rCAIOK7wq0ACjq34D5+yHfIvEPvUcBODRYwp53Kyq9jte4FzEkikZwABsyVSAKUT8AQEwFxOMuAxAVR/NyCeSCOAgNkSKYDSCRgAAAAAkvwCHFqA5YaHqusAAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 8}}, "Archer": {"idle": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABXElEQVR4nO3aq1LDQBQG4IVBVjCDAMEjRKHpE4DA83x4BAIPGpWHwDCDwLcCFYZOu80mm+R8n+sll/7dM9mzSUoAAAAAAMBSnZTeYdM0m33fadu2+HH5Jf88Z0Ps9OP9eednN7cPQxyymCUMIPkfbpACmLs5D6AlGDP/06J7g5lRAISmAAitdw/wX9Oyb572d5upN5VTJv9+ev/wpmk2V/fnR2//+fJd9Q84ZNVhn9rnL//jz98qUEqp7wCin5r56wEITQEQmgIgtNF7gKf1qvvGepVSuu40Qpd3r2FXJYYm/y5NcCYDqK7S+ZsCEdroV4DHt5/O69rr0NHIv8sUKJMBVFfp/E2BCE0BEJoCIDQFQGgKgNCKrAJ5IrIu+R+vdwEsYQlwzgNI/gAAZMqZP14Mdha7fVU45lTJfwCRngUygOqaZP7uAxCaAiC0nCmQy3ld8gcAAAAAAMiwBQKOg/a7/9SgAAAAAElFTkSuQmCC", "w": 48, "h": 48, "frames": 4, "fps": 6}, "attack": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABLklEQVR4nO3aoU7EQBQF0IEgV5AgQPAJVWj2C0Dg+T48AoEHjepHYEhW4FnRoAhs0762Q985apPdnekVN+3MtBQAAAAAAGCtjqIGaprm69Bv2rYNm28KMtRhzgwnEYN8e3t9/PW7q+u7yKkmI0Md5spwHDYS/EMKQGoKQGoKQGqDV9J9VuqHLL0bIUMnc4ZRu0AXt6eD//v+tBszdRgZdmHXMcZSGTwCkZoCkFroQVgfD9tN92G7KaVc/vnsd37zXOWJpQx1iMjgDkBqCkBqsz8C3b98llK6lfvS229DyVCHiAzuAKSmAKSmAKSmAKSmAKSmAKSmAKSmAKQ26iCslldpx5ChDmvIAAAA1K/PG3Rnk1/FTx/B48kwzOoz2AYlNQUgNQUAAAAAAAAAWJs9QcxwjsYQa2kAAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 8}, "death": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABVklEQVR4nO3aLVLDQBiA4cAgK5hBgOAIUWh6AhB4zodHVOBBo3KIGmYq8FSH0inZbpLufs/j+pNszJvdbNs0AAAAAABArc5yn7Bt259D3+m6Lvu4kOJijJN+frzu/ezu/mmMIbMRcCyjBFA6AcchgAoJ+P8EwMmZMuDzrGeDwhw9A/w1ZR2q9Pcx1qTMJcsS6ObxMvnY9WqT4xKSCTg2zwCNgCMHLIAKCDg9YAEwuzkDtgtEaJPPAC/LRf+N5aJpmtvelHb98BZ2Tcq0LIEGEnBdBBCMgPsmD+D5/bv3er3ahN6GY5jcAZsBBhJwXQQQjID7BEBRcgfsdwBCEwChCYDQsjwDzP2HKkh1dAA17CAIOK7wu0ACji18AKUTMJBsyN3jarSr2O9rhjEJJNISSMDsiBRA6QQ8AgEwlZMMeEgA1d8NiCfSDCBgdkQKoHQCBgAAAIAkW5BThAfGYIVNAAAAAElFTkSuQmCC", "w": 48, "h": 48, "frames": 4, "fps": 8}}, "Healer": {"idle": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABYUlEQVR4nO3avU3DQBgG4AOxAQUSygJIrqjZgIYFkCgYJC07UCCxACUDUFNZYgM6ZkgKKiMix/bZZ/t7ni4//smb++T7zk4JAAAAAABYq5PcO6yqatf2nbqusx+XX/Lv5myMnX5+vB387PrmboxDZrOGAST/441SAEu35AG0BlPmf5p1b7AwCoDQFAChDe4B/mta2uZpf7eZe1M5Z/IfZvAPr6pqd/nw3Hv775fHon/AMasObUqfv/z7n79VoJTS0AHEMCXz1wMQmgIgNAVAaJP3AK9X2+YbT5uU0qbRCF3cvoddlRib/Js0wR0ZQGXlzt8UiNAmvwLcf20br0uvQ0cj/yZToI4MoLJy528KRGgKgNAUAKEpAEJTAISWZRXIE5Flyb+/8Mt3pZ9Hj07+AACT6zJ3Oh/tLA77KXDMuZL/CCI9C2QAlTXL/N0HIDQFQGhdpkAu52XJHwAAAAAAoIM9O9R/hQiJyaQAAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 6}, "attack": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABMElEQVR4nO3asU3DQBQG4AOxQQoklAWQXKVmAxoWQKJgkLTZgQKJBSgZgJrKEhvQMQMUFhUisexn5/D7vipSkjv/xS/77lwKAAAAAACwVCdRAzVN83XoN23bhs03BRnqMGeGs4hBfry9Pv/53ebqJnKqychQh7kynIaNBP+QApCaApCaApDa4JV0n5X6IcfejZChkznDqF2gi7uHwf/9eLwfM3UYGXJn8AhEagpAaqEHYX08XW67D7t1KWW999nv/PqlyhNLGeoQkcEdgNQUgNRmfwS6fd+WUrqV+7G334aSoQ4RGdwBSE0BSE0BSE0BSE0BSE0BSE0BSE0BSG3UQVgtr9KOIUMdlpABAACoX5836FaTX8Vvn8HjyTDM4jPYBiU1BSA1BQAAAAAAAABYmm+8HmzuRqDiygAAAABJRU5ErkJggg==", "w": 48, "h": 48, "frames": 4, "fps": 8}, "death": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABZklEQVR4nO3cvU3DQBiAYYPYgAIJZQEkV9RsQMMCSBQZJC07UERiAUoGoKayxAbpmAFqE6LEl7Odu+95uvz4R4pe3/kSpWkAAAAAAIBaneXeYdu2P/ve03Vd9uNCiosxdvr58bbztdu7hzEOmY2AYxklgNIJOA4BVEjAhxMAJ2fKgM+z7g0Kc/QI8N+Qta/Sv9uYkzKXLFOg66eX5G0362WOU0gm4NjcAzQCjhywACog4PSABcDs5gzYKhChTT4CvN6s+k88L5qmWfSGtKv797BzUqZlCjSQgOsigGAE3Dd5AI9fq97jzXoZehmOYXIHbAQYSMB1EUAwAu4TAEXJHbDvAQhNAIQmAELLcg8w9w+qINXRAdSwgiDguMKvAgk4tuI/fMp2yL9A7FPDRQxmMaScy9HOYrfvGY5JIJHuAQTMlkgBlE7AIxAAUznJgIcEUP3VgHgijQACZkukAEonYAAAAABI8gvR/n/9cb0hEQAAAABJRU5ErkJggg==", "w": 48, "h": 48, "frames": 4, "fps": 8}}, "Assassin": {"idle": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABXklEQVR4nO3av03DQBQH4ANRpohEQcMIrqjZgAaJLdiACdiALZAoGYCaymsgpaAPBZURkXPx2Wf7fV9nJf6TX+7J985OCQAAAAAAWKuz0gdsmmbf9522bYufl1/yz3MxxkE/P94OfnZzez/GKYtZwwCS//FGKYClW/IAWoMp8z8vejRYGAVAaAqA0Ab3AP81LX3ztL/7zL2pnDP5DzP4hzdNs3/cbk/e/2W3q/oHHLPq0Kf29cv/9Ou3CpRSGjqAGKZm/noAQlMAhKYACG3yHuDhadPdTpuU0nWnEbq6ew+7KjE2+XdpgjMZQHWVzt8UiNAmvwO8Pn93tmuvQ0cj/y5ToEwGUF2l8zcFIjQFQGgKgNAUAKEpAEIrsgrkjci65H+68Mt3td9Hj07+AACTy5k7XY52FYd9VTjnXMl/BJHeBTKA6ppl/p4DEJoCILScKZDbeV3yBwAAAAAAyPADRW6BtTlyhCYAAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 6}, "attack": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABMklEQVR4nO3asU3DQBQG4ANRpohEQcMIrqjZgAaJLdiACdiALZAoGYCaymsguaCHwkqFIJb9bB9+39ekSHLnv/hl351LAQAAAAAAtuokaqCmab6O/aZt27D55iBDHZbMcBYxyMH728uv311d30ZONRsZ6rBUhtOwkeAfUgBSUwBSUwBSG72SHrJSP2bt3QgZepkzTNoFut/vR//3qeumTB1Ghi7sOqZYK4NHIFJTAFILPQgb4u5h13+WXSnl8s9nv4ub1ypPLGWoQ0QGdwBSUwBSW/wR6Pnxs5TSr9zX3n4bS4Y6RGRwByA1BSA1BSA1BSA1BSA1BSA1BSA1BSC1SQdhtbxKO4UMddhCBgAAoH5D3qA7n/0qfvoIHk+GcTafwTYoqSkAqSkAAAAAAAAAwNZ8AzhKcDb9Fmf3AAAAAElFTkSuQmCC", "w": 48, "h": 48, "frames": 4, "fps": 8}, "death": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABY0lEQVR4nO3cvU3DQBiA4QNRpohEQcMIrqjZgAaJLdiACdggWyBRMgA1VdZAckEPtRMix87Zzt33PJ2V+EeKXt/5EiUlAAAAAACgVhe5D9g0zW/fe7bbbfbzwhhXUxz06/P94Gt3949TnDIbAccySQClE3AcAqiQgI8nAM7OnAFfZj0aFObkEeC/Iauv0t19zElZSpYp0PN6PXrfTdvmuITRBBybZ4Ak4MgBC6ACAh4fsABY3JIBWwUitNlHgKeXVXc7rVJKt50h7ebhI+yclHmZAg0k4LoIIBgBd80ewNvrT2d707ahl+EYJnfARoCBBFwXAQQj4C4BUJTcAfsegNAEQGgCILQszwBL/6AKxjo5gBpWEAQcV/hVIAHHVvyHT9mO+ReIPjXcxGARQ8q5nuwqDvte4JwEEukZQMDsiRRA6QQ8AQEwl7MMeEgA1d8NiCfSCCBg9kQKoHQCBgAAAIBR/gCny4K5hs/ufwAAAABJRU5ErkJggg==", "w": 48, "h": 48, "frames": 4, "fps": 8}}, "Mage": {"idle": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABX0lEQVR4nO3avVHDQBAG0IOhAwISl6AhIKYDCMjJ6IAGCGiADsjICQgogJiAURvUYAdE8uCRJZ10kva9TGPrx59vR7cnpQQAAAAAAKzVSe4DVlW1bftOXdfZz8sf+XdzNsZBv7/eD352dX03ximzWcMAkv/xRimApVvyAFqDKfM/zXo0WBgFQGgKgNAG9wD/NS1t87T9febeVM6Z/IcZ/MOrqtreXj713v/j57noH3DMqkOb0tcv//7XbxUopTR0ADFMyfz1AISmAAhNARDa5D3A4/3r3vYmpbRpNEIXN59hVyXGJv8mTXBHBlBZufM3BSK0ye8AL28Pje3S69DRyL/JFKgjA6is3PmbAhGaAiA0BUBoCoDQFAChZVkF8kZkWfLvL/zyXen30aOTPwDA5LrMnc5Hu4rDfgucc67kP4JI7wIZQGXNMn/PAQhNARBalymQ23lZ8gcAAAAAAOhgB1B3gUXAHhfdAAAAAElFTkSuQmCC", "w": 48, "h": 48, "frames": 4, "fps": 6}, "attack": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABLklEQVR4nO3aIVLDQBQG4IXpDRCYHiFTgeYGIPA4bsAFEL0AN8DhEQgOgEYwuQZnANFWMbSZ5CVd8r7PVLTdzS/+SXY3pQAAAAAAAHN1EjVQ0zTfh37Ttm3YfGOQoQ5TZlhEDLLz8f7y53cXlzeRU41GhjpMleE0bCT4hxSA1BSA1BSA1HqvpLus1A859m6EDBuZMwzaBbpePfT+7+vnesjUYWTIncEjEKkpAKmFHoR1cX/7tP1cllKWe5/9zq/eqjyxlKEOERncAUhNAUht8kegx+e7Uspm5X7s7be+ZKhDRAZ3AFJTAFJTAFJTAFJTAFJTAFJTAFJTAFIbdBBWy6u0Q8hQhzlkAAAA6tflDbqz0a/it6/g8WToZ/YZbIOSmgKQmgIAAAAAAAAAzM0PeRtu6rI5lg4AAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 8}, "death": {"src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAYAAABHTnUeAAABZElEQVR4nO3cvU3DQBiAYYPYgIImI1gU1GwABT0dG7AARRZgAzp6ihQMQE0RZQ1mgNoJkWPn7Mvd9zydlfhHil7f+RKlaQAAAAAAgFqdpT5g27a/fe/ZbDbJzwtjXExx0O+vj72v3dw+THHKZAQcyyQBlE7AcQigQgI+nAA4OXMGfJ70aFCYo0eA/4asvkq39zEnJZckU6D765fR+67WyxSXMJqAY/MM0Ag4csACqICAxwcsALLLGbBVIEKbfQR4fnzb2l40TbPoDGlXd59h56TMyxRoIAHXRQDBCLhr9gBe358626v1MvQyHMOkDtgIMJCA6yKAYATcJQCKkjpg3wMQmgAITQCEluQZIPcPqmCsowOoYQVBwHGFXwUScGzFf/iU7ZB/gehTw00MshhSzuVkV7HfT4ZzEkikZwABsyNSAKUT8AQEwFxOMuAhAVR/NyCeSCOAgNkRKYDSCRgAAAAARvkDgeqB21z1iNgAAAAASUVORK5CYII=", "w": 48, "h": 48, "frames": 4, "fps": 8}}};
 (function(){
   const diag = document.getElementById('diag');
-  function dmsg(msg, cls){ diag.innerHTML = '<span class="'+(cls||'ok')+'">'+msg+'</span>'; }
+  function dmsg(m){ diag.textContent=m; }
 
   const state = {
     gold: 10, level: 3, cap: 3, benchCap: 5, levelCost: 4,
     rowF: [null,null,null,null],
     rowB: [null,null,null,null],
     bench: [null,null,null,null,null],
-    relics: ['Shield @ start'],
-    wave: 1, inBattle: false, locked: false,
-    selected: null
+    relics: ['Holy Shield'],
+    wave: 1, locked: false, selected: null
   };
   const CLASSES = {
-    K:{name:'Knight', cls:'Knight', hp:100, atk:10, spd:1.8, range:'melee'},
-    A:{name:'Archer', cls:'Archer', hp:60, atk:15, spd:1.4, range:'ranged'},
-    H:{name:'Healer', cls:'Healer', hp:50, atk:5, spd:2.0, range:'support', heal:15},
-    S:{name:'Assassin', cls:'Assassin', hp:55, atk:18, spd:1.6, range:'melee', backstab:true},
-    M:{name:'Mage', cls:'Mage', hp:55, atk:14, spd:1.6, range:'ranged', splash:true}
+    K:{name:'Knight', cls:'Knight', hp:100, atk:10, spd:1.8},
+    A:{name:'Archer', cls:'Archer', hp:60, atk:15, spd:1.4},
+    H:{name:'Healer', cls:'Healer', hp:50, atk:5,  spd:2.0, heal:15},
+    S:{name:'Assassin', cls:'Assassin', hp:55, atk:18, spd:1.6, backstab:true},
+    M:{name:'Mage', cls:'Mage', hp:55, atk:14, spd:1.6, splash:true}
   };
   const ENEMIES = [
     {name:'Goblins', count:3, hp:40, atk:8, spd:1.8},
@@ -126,149 +114,77 @@ const EMBED_SPRITES = {"Knight": {"idle": {"src": "data:image/png;base64,iVBORw0
   const rng = mulberry32(1337);
   function rand(){ return rng(); }
   function choice(arr){ return arr[Math.floor(rand()*arr.length)] }
-  function makeUnit(code){
-    const b=CLASSES[code]; return {code, name:b.name, cls:b.cls, maxhp:b.hp, hp:b.hp, atk:b.atk, spd:b.spd, heal:b.heal||0, backstab:!!b.backstab, splash:!!b.splash, tier:1};
-  }
+  function makeUnit(code){ const b=CLASSES[code]; return {code, name:b.name, cls:b.cls, maxhp:b.hp, hp:b.hp, atk:b.atk, spd:b.spd, heal:b.heal||0, backstab:!!b.backstab, splash:!!b.splash, tier:1}; }
   function powerUp(u){ u.tier+=1; u.maxhp=Math.round(u.maxhp*1.5); u.hp=u.maxhp; u.atk=Math.round(u.atk*1.5); }
-  function icon(u){ return `<div class="unit"><div class="badge">${u.name}</div><div class="small">T${u.tier}</div></div>`; }
+  function icon(u){ return `<div class="badge">${u.name}</div><div class="small" style="color:#f2f2f2">T${u.tier}</div>`; }
+
   function boardCount(){ return [...state.rowF, ...state.rowB].filter(Boolean).length; }
   function getAt(area, idx){ return area==='rowF'?state.rowF[idx] : area==='rowB'?state.rowB[idx] : state.bench[idx]; }
   function setAt(area, idx, val){ if(area==='rowF') state.rowF[idx]=val; else if(area==='rowB') state.rowB[idx]=val; else state.bench[idx]=val; }
 
-  function renderPrep(){
-    const f=document.getElementById('rowF'), b=document.getElementById('rowB'), bench=document.getElementById('bench');
-    f.innerHTML=''; b.innerHTML=''; bench.innerHTML='';
-    function slot(area,i,u){
-      const d=document.createElement('div'); d.className='slot'; if(state.selected && state.selected.area===area && state.selected.idx===i) d.classList.add('sel');
-      d.innerHTML = u?icon(u):'';
-      if(u){
-        const bar=document.createElement('div'); bar.className='hpbar'; const fill=document.createElement('div'); fill.className='hpfill';
-        fill.style.width = Math.max(0,Math.round(100*u.hp/u.maxhp))+'%'; bar.appendChild(fill); d.appendChild(bar);
-      }
-      d.onclick=()=>onSlotTap(area,i);
-      return d;
+  function slot(area,i,u){
+    const d=document.createElement('div'); d.className='slot'; if(state.selected && state.selected.area===area && state.selected.idx===i) d.classList.add('sel');
+    d.innerHTML = u?icon(u):'';
+    if(u){
+      const bar=document.createElement('div'); bar.className='hpbar'; const fill=document.createElement('div'); fill.className='hpfill'; fill.style.width=Math.max(0,Math.round(100*u.hp/u.maxhp))+'%'; bar.appendChild(fill); d.appendChild(bar);
     }
+    d.onclick=()=>{
+      if(!state.selected){ const u=getAt(area,i); if(!u){ dmsg('Empty slot'); return; } state.selected={area,i}; renderPrep(); return; }
+      if(state.selected.area===area && state.selected.idx===i){ state.selected=null; renderPrep(); return; }
+      const from=getAt(state.selected.area,state.selected.idx), to=getAt(area,i); if(!from){ state.selected=null; renderPrep(); return; }
+      const intoBoard = (state.selected.area==='bench') && (area!=='bench') && !to;
+      if(intoBoard && boardCount()>=state.cap){ dmsg('Board full. Level up.'); state.selected=null; renderPrep(); return; }
+      setAt(state.selected.area,state.selected.idx,to); setAt(area,i,from); state.selected=null; renderPrep();
+    };
+    return d;
+  }
+
+  function renderPrep(){
+    const f=document.getElementById('rowF'), b=document.getElementById('rowB'), bn=document.getElementById('bench');
+    f.innerHTML=''; b.innerHTML=''; bn.innerHTML='';
     for(let i=0;i<4;i++){ f.appendChild(slot('rowF',i,state.rowF[i])); }
     for(let i=0;i<4;i++){ b.appendChild(slot('rowB',i,state.rowB[i])); }
-    for(let i=0;i<state.benchCap;i++){ bench.appendChild(slot('bench',i,state.bench[i])); }
+    for(let i=0;i<state.benchCap;i++){ bn.appendChild(slot('bench',i,state.bench[i])); }
     document.getElementById('gold').textContent=state.gold;
     document.getElementById('lvl').textContent=state.level;
     document.getElementById('cap').textContent=state.cap;
-    document.getElementById('enemyPrev').textContent = enemyPreviewText();
-  }
-  function onSlotTap(area, idx){
-    const sel = state.selected;
-    if(!sel){ const u = getAt(area, idx); if(!u){ dmsg('Empty slot', 'warn'); return; } state.selected = {area, idx}; renderPrep(); return; }
-    if(sel.area===area && sel.idx===idx){ state.selected=null; renderPrep(); return; }
-    const fromU = getAt(sel.area, sel.idx); const toU = getAt(area, idx); if(!fromU){ state.selected=null; renderPrep(); return; }
-    const movingIntoBoard = (sel.area==='bench') && (area!=='bench') && !toU;
-    if(movingIntoBoard && boardCount() >= state.cap){ dmsg(`Board full (${state.cap}). Level up.`, 'warn'); state.selected=null; renderPrep(); return; }
-    setAt(sel.area, sel.idx, toU); setAt(area, idx, fromU); state.selected=null; renderPrep();
+    const base = ENEMIES[(state.wave-1)%ENEMIES.length];
+    document.getElementById('enemyPrev').textContent = `${base.name} ×${base.count}  HP ${base.hp}  ATK ${base.atk}` + (base.poison?`  Poison ${base.poison}`:'');
   }
 
-  function enemyPreviewText(){ const base = ENEMIES[(state.wave-1)%ENEMIES.length]; return `Next: ${base.name} ×${base.count} • HP ${base.hp} • ATK ${base.atk}` + (base.poison?` • Poison ${base.poison}`:''); }
-
-  function rollShop(){
-    if(state.locked) return;
-    const shop=document.getElementById('shop'); shop.innerHTML='';
-    const codes = Object.keys(CLASSES); const offs=[choice(codes), choice(codes), choice(codes)];
-    offs.forEach(code => {
-      const u=makeUnit(code);
-      const btn=document.createElement('div'); btn.className='btn'; btn.innerHTML=`${u.name}<div class="small">${u.cls}</div>`;
-      btn.onclick=()=>{
-        if(state.gold<3){ dmsg('Not enough gold', 'warn'); return; }
-        const idx=state.bench.findIndex(x=>!x); if(idx===-1){ dmsg('Bench full', 'warn'); return; }
-        state.gold-=3; addOrMerge(u); renderPrep();
-        blog(`Bought ${u.name} (3g).`);
-      };
-      shop.appendChild(btn);
-    });
-  }
   function addOrMerge(u){
     const all=[...state.rowF,...state.rowB,...state.bench].filter(Boolean);
     const same=all.filter(x=>x.name===u.name && x.tier===u.tier);
     if(same.length>=2){
-      let consumed=0;
-      function removeOne(list){
-        for(let i=0;i<list.length;i++){
-          if(list[i] && list[i].name===u.name && list[i].tier===u.tier && consumed<2){ list[i]=null; consumed++; }
-        }
-      }
-      removeOne(state.bench); removeOne(state.rowB); removeOne(state.rowF);
+      let c=0
+      function rem(list){ for(let i=0;i<list.length;i++){ if(list[i] && list[i].name===u.name && list[i].tier===u.tier && c<2){ list[i]=null; c++; } } }
+      rem(state.bench); rem(state.rowB); rem(state.rowF);
       const up=makeUnit(u.code); up.tier=u.tier; up.maxhp=u.maxhp; up.hp=u.maxhp; up.atk=u.atk; powerUp(up);
-      const slot=state.bench.findIndex(x=>!x); if(slot!==-1) state.bench[slot]=up;
-      dmsg(`Merge! ${u.name} → tier ${up.tier}`, 'ok'); blog(`Merge! ${u.name} → Tier ${up.tier}`);
-    }else{ const idx=state.bench.findIndex(x=>!x); if(idx!==-1) state.bench[idx]=u; }
+      const s=state.bench.findIndex(x=>!x); if(s!==-1) state.bench[s]=up;
+      dmsg(`Merge! ${u.name} → Tier ${up.tier}`);
+    }else{
+      const i=state.bench.findIndex(x=>!x); if(i!==-1) state.bench[i]=u;
+    }
   }
 
-  // Sprite Animator
-  const SPR = EMBED_SPRITES;
-  function SpritePlayer(conf, name){
-    const img = new Image();
-    img.src = conf.src;
-    return { img, conf, frame:0, t:0, playing:true, action:'idle', name };
-  }
-  function setAction(player, action){
-    const anim = SPR[player.name][action];
-    if(!anim) return;
-    player.action = action;
-    player.conf = anim;
-    player.img.src = anim.src;
-    player.frame = 0; player.t = 0;
-  }
-  function stepAnim(player, dt){
-    const conf = player.conf; if(!conf) return;
-    player.t += dt;
-    const dur = 1/conf.fps;
-    if(player.t >= dur){ player.t -= dur; player.frame = (player.frame + 1) % conf.frames; }
+  function rollShop(){
+    if(state.locked) return;
+    const box=document.getElementById('shop'); box.innerHTML='';
+    const codes=Object.keys(CLASSES);
+    [0,1,2,3].forEach(()=>{
+      const code=codes[Math.floor(rand()*codes.length)]; const u=makeUnit(code);
+      const btn=document.createElement('button'); btn.className='btn'; btn.innerHTML=`${u.name}<div class="small subtle">class: ${u.cls}</div>`;
+      btn.onclick=()=>{ if(state.gold<2){ dmsg('Need 3g'); return; } const i=state.bench.findIndex(x=>!x); if(i===-1){ dmsg('Bench full'); return; } state.gold-=3; addOrMerge(u); renderPrep(); };
+      box.appendChild(btn);
+    });
   }
 
-  // Battle with sprite rendering + log + slow pacing
-  const PACE=2.2; // slower combat base
-  let speedIdx=0; const SPEEDS=[0.5,0.75,1.0];
-  let battle=null;
+  // Battle
+  const SPEEDS=[0.5,0.75,1.0]; let speedIdx=0;
+  const PACE=2.3;
   const blogEl=document.getElementById('blog');
-  function blog(msg, cls){ const p=document.createElement('div'); if(cls) p.className=cls; p.textContent=msg; blogEl.appendChild(p); blogEl.scrollTop=blogEl.scrollHeight; }
+  function blog(t, cls){ const p=document.createElement('div'); if(cls) p.className=cls; p.textContent=t; blogEl.appendChild(p); blogEl.scrollTop=blogEl.scrollHeight; }
   function clearBlog(){ blogEl.textContent=''; }
-
-  function makeCell(label,hp,maxhp,side){
-    const c=document.createElement('div'); c.className='cell';
-    const spr=document.createElement('div'); spr.className='sprite'; c.appendChild(spr);
-    const nm=document.createElement('div'); nm.className='name'; nm.textContent=label; c.appendChild(nm);
-    const hb=document.createElement('div'); hb.className='hpbar'; const fill=document.createElement('div'); fill.className='hpfill'; fill.style.width=Math.round(100*hp/maxhp)+'%'; hb.appendChild(fill); c.appendChild(hb);
-    return {c, spr, fill};
-  }
-
-  function toBattle(){
-    clearBlog();
-    const act=[];
-    for(let i=0;i<4;i++){ const u=state.rowF[i]; if(u) act.push({u, side:'ally'}); }
-    for(let i=0;i<4;i++){ const u=state.rowB[i]; if(u) act.push({u, side:'ally'}); }
-    if(!act.length){ dmsg('No units on board', 'warn'); return; }
-    const party=act.slice(0, state.cap).map(x=>({u:{...x.u}, side:'ally', next:x.u.spd*PACE}));
-    party.forEach(p=>p.u.hp=Math.min(p.u.maxhp+5,p.u.hp+5));
-    const base = ENEMIES[(state.wave-1)%ENEMIES.length];
-    const mobs=[]; for(let i=0;i<base.count;i++){ const mh=Math.round(base.hp*(1+0.18*(state.wave-1))); mobs.push({name:base.name, side:'enemy', hp:mh, maxhp:mh, atk:Math.round(base.atk*(1+0.12*(state.wave-1))), spd:base.spd, next:base.spd*PACE}); }
-    battle={party,mobs,poison:base.poison||0, t:0, dt:0.06, speed:SPEEDS[speedIdx], running:true, result:null, els:{}};
-    document.getElementById('bwavenum').textContent=state.wave;
-    renderField(battle);
-    document.getElementById('prep').style.display='none'; document.getElementById('battle').style.display='block';
-    blog(`▶ Wave ${state.wave}: ${base.name} appear.`,'notice');
-    loop();
-  }
-
-  function renderField(b){
-    const eline=document.getElementById('eline'), aline=document.getElementById('aline');
-    eline.innerHTML=''; aline.innerHTML='';
-    // enemies
-    for(let i=0;i<4;i++){ const m=b.mobs[i]; if(m){ const d=makeCell(b.mobs[0].name,m.hp,m.maxhp,'enemy'); m._=d; eline.appendChild(d.c);
-      const cls='Knight'; const conf=SPR[cls].idle; const sp=SpritePlayer(conf, cls); m._player=sp; d.spr.style.backgroundImage = 'url('+sp.conf.src+')'; d.spr.style.backgroundPosition='0px 0px';
-    } else { eline.appendChild(Object.assign(document.createElement('div'),{className:'cell'})); } }
-    // allies
-    for(let i=0;i<4;i++){ const p=b.party[i]; if(p){ const d=makeCell(p.u.name,p.u.hp,p.u.maxhp,'ally'); p._=d; aline.appendChild(d.c);
-      const cls=p.u.cls; const conf=SPR[cls].idle; const sp=SpritePlayer(conf, cls); p._player=sp; d.spr.style.backgroundImage = 'url('+sp.conf.src+')'; d.spr.style.backgroundPosition='0px 0px';
-    } else { aline.appendChild(Object.assign(document.createElement('div'),{className:'cell'})); } }
-  }
 
   function setBGFrame(el, conf, frame){
     const x = -conf.w*frame;
@@ -277,22 +193,61 @@ const EMBED_SPRITES = {"Knight": {"idle": {"src": "data:image/png;base64,iVBORw0
     el.style.backgroundPosition = x+'px 0px';
   }
 
-  function pickAlive(arr){ const alive=arr.filter(x=>x.hp>0); return alive.length?alive[Math.floor(rand()*alive.length)]:null; }
-
-  function endBattle(victory){
-    battle.running=false;
-    battle.result = victory? 'win':'loss';
-    document.getElementById('bcontinue').disabled = false;
-    if(victory) blog('Victory! +5 gold. Tap Continue.','win'); else blog('Defeat... Tap Continue.','loss');
+  function SpritePlayer(name, action='idle'){
+    const conf=SPRITES[name][action];
+    const s={name, action, conf, frame:0, t:0};
+    return s;
   }
+  function stepAnim(sp, dt){
+    sp.t += dt;
+    const dur=1/sp.conf.fps;
+    if(sp.t >= dur){ sp.t -= dur; sp.frame=(sp.frame+1)%sp.conf.frames; }
+  }
+  function play(sp, action){ if(!SPRITES[sp.name][action]) return; sp.action=action; sp.conf=SPRITES[sp.name][action]; sp.frame=0; sp.t=0; }
+
+  function cell(label,hp,maxhp,cls){
+    const c=document.createElement('div'); c.className='cell';
+    const spr=document.createElement('div'); spr.className='sprite'; c.appendChild(spr);
+    const nm=document.createElement('div'); nm.className='name'; nm.textContent=label; c.appendChild(nm);
+    const hb=document.createElement('div'); hb.className='hpbar'; const fill=document.createElement('div'); fill.className='hpfill'; fill.style.width=Math.round(100*hp/maxhp)+'%'; hb.appendChild(fill); c.appendChild(hb);
+    const sp=SpritePlayer(cls,'idle'); setBGFrame(spr, sp.conf, 0);
+    return {c,spr,fill,sp};
+  }
+
+  let battle=null;
+  function toBattle(){
+    clearBlog();
+    const party=[];
+    for(let i=0;i<4;i++){ const u=state.rowF[i]; if(u) party.push({u:{...u}, next:u.spd*PACE}); }
+    for(let i=0;i<4;i++){ const u=state.rowB[i]; if(u) party.push({u:{...u}, next:u.spd*PACE}); }
+    if(!party.length){ dmsg('No units on board'); return; }
+    party.forEach(p=>p.u.hp=Math.min(p.u.maxhp+5,p.u.hp+5));
+    const base=ENEMIES[(state.wave-1)%ENEMIES.length];
+    const mobs=[]; for(let i=0;i<base.count;i++){ const mh=Math.round(base.hp*(1+0.18*(state.wave-1))); mobs.push({name:base.name, hp:mh, maxhp:mh, atk:Math.round(base.atk*(1+0.12*(state.wave-1))), spd:base.spd, next:base.spd*PACE}); }
+    battle={party,mobs,poison:base.poison||0, t:0, dt:0.06, speed:SPEEDS[speedIdx], running:true, result:null};
+    document.getElementById('bwavenum').textContent=state.wave;
+    renderField();
+    document.getElementById('prep').style.display='none'; document.getElementById('battle').style.display='block';
+    blog(`▶ Wave ${state.wave}: ${base.name} appear.`,'notice');
+    loop();
+  }
+
+  function renderField(){
+    const eline=document.getElementById('eline'), aline=document.getElementById('aline');
+    eline.innerHTML=''; aline.innerHTML='';
+    for(let i=0;i<4;i++){ const m=battle.mobs[i]; if(m){ const d=cell(battle.mobs[0].name,m.hp,m.maxhp,'Knight'); m._=d; eline.appendChild(d.c);} else { eline.appendChild(Object.assign(document.createElement('div'),{className:'cell'})); } }
+    for(let i=0;i<4;i++){ const p=battle.party[i]; if(p){ const d=cell(p.u.name,p.u.hp,p.u.maxhp,p.u.cls); p._=d; aline.appendChild(d.c);} else { aline.appendChild(Object.assign(document.createElement('div'),{className:'cell'})); } }
+  }
+
+  function pickAlive(arr){ const alive=arr.filter(x=>x.hp>0); return alive.length?alive[Math.floor(rand()*alive.length)]:null; }
+  function endBattle(v){ battle.running=false; battle.result=v?'win':'loss'; document.getElementById('bcontinue').disabled=false; blog(v?'Victory! +5 gold. Tap Continue.':'Defeat... Tap Continue.', v?'win':'loss'); }
 
   function loop(){
     if(!battle || !battle.running) return;
-    const step = battle.dt*battle.speed; battle.t+=step;
+    const step=battle.dt*battle.speed; battle.t+=step;
 
-    // animate sprites
-    for(const p of battle.party){ if(p._player){ stepAnim(p._player, step); setBGFrame(p._.spr, p._player.conf, p._player.frame); } }
-    for(const m of battle.mobs){ if(m._player){ stepAnim(m._player, step); setBGFrame(m._.spr, m._player.conf, m._player.frame); } }
+    for(const p of battle.party){ if(p._){ stepAnim(p._.sp, step); setBGFrame(p._.spr, p._.sp.conf, p._.sp.frame); } }
+    for(const m of battle.mobs){ if(m._){ stepAnim(m._.sp, step); setBGFrame(m._.spr, m._.sp.conf, m._.sp.frame); } }
 
     if(battle.poison && Math.floor(battle.t)%3===0 && Math.abs(battle.t-Math.floor(battle.t))<1e-9){
       battle.party.forEach(p=>{ if(p.u.hp>0){ p.u.hp-=battle.poison; if(p._) p._.fill.style.width=Math.round(100*p.u.hp/p.u.maxhp)+'%'; blog(`Poison ticks for ${battle.poison}.`); } });
@@ -309,7 +264,7 @@ const EMBED_SPRITES = {"Knight": {"idle": {"src": "data:image/png;base64,iVBORw0
           const t=pickAlive(battle.mobs);
           if(t){ let dmg=p.u.atk; if(p.u.backstab) dmg=Math.round(dmg*1.2);
             t.hp-=dmg; if(t._) t._.fill.style.width=Math.round(100*t.hp/t.maxhp)+'%'; blog(`${p.u.name} hits ${t.name} for ${dmg}.`);
-            if(p._player){ setAction(p._player,'attack'); setTimeout(()=>{ if(p._player) setAction(p._player,'idle'); }, 400); }
+            if(p._){ play(p._.sp,'attack'); setTimeout(()=>{ if(p._) play(p._.sp,'idle'); }, 380); }
           }
         }
         p.next += p.u.spd*PACE;
@@ -321,7 +276,7 @@ const EMBED_SPRITES = {"Knight": {"idle": {"src": "data:image/png;base64,iVBORw0
       if(m.next<=0){
         const tgt = pickAlive(battle.party.map(x=>x.u));
         if(tgt){ tgt.hp-=m.atk; const wrap=battle.party.find(pp=>pp.u===tgt); if(wrap && wrap._) wrap._.fill.style.width=Math.round(100*wrap.u.hp/wrap.u.maxhp)+'%'; blog(`${m.name} hits ${tgt.name} for ${m.atk}.`);
-          if(m._player){ setAction(m._player,'attack'); setTimeout(()=>{ if(m._player) setAction(m._player,'idle'); }, 400); }
+          if(m._){ play(m._.sp,'attack'); setTimeout(()=>{ if(m._) play(m._.sp,'idle'); }, 380); }
         }
         m.next += m.spd*PACE;
       }
@@ -335,35 +290,30 @@ const EMBED_SPRITES = {"Knight": {"idle": {"src": "data:image/png;base64,iVBORw0
 
   // Buttons
   function wire(){
-    document.getElementById('reroll').onclick=()=>{ if(state.gold<2){ dmsg('Not enough gold', 'warn'); return; } state.gold-=2; state.locked=false; rollShop(); renderPrep(); dmsg('Shop rerolled', 'ok'); };
-    document.getElementById('lock').onclick=()=>{ state.locked=!state.locked; dmsg(state.locked?'Shop locked':'Shop unlocked', 'ok'); };
-    document.getElementById('level').onclick=()=>{ if(state.gold<state.levelCost){ dmsg(`Need ${state.levelCost}g`, 'warn'); return; } state.gold-=state.levelCost; state.level+=1; state.cap=Math.min(6,state.cap+1); state.levelCost+=2; renderPrep(); dmsg(`Level ${state.level} (cap ${state.cap})`, 'ok'); };
+    document.getElementById('reroll').onclick=()=>{ if(state.gold<2){ dmsg('Not enough gold'); return; } state.gold-=2; state.locked=false; rollShop(); renderPrep(); };
+    document.getElementById('lock').onclick=()=>{ state.locked=!state.locked; dmsg(state.locked?'Shop locked':'Shop unlocked'); };
+    document.getElementById('level').onclick=()=>{ if(state.gold<state.levelCost){ dmsg(`Need ${state.levelCost}}g`); return; } state.gold-=state.levelCost; state.level+=1; state.cap=Math.min(6,state.cap+1); state.levelCost+=2; renderPrep(); };
     document.getElementById('start').onclick=()=>{ document.getElementById('bcontinue').disabled = true; toBattle(); };
-    document.getElementById('spawn').onclick=()=>{ state.rowF=[makeUnit('K'),null,null,null]; state.rowB=[null,makeUnit('A'),null,null]; state.bench=[makeUnit('H'),null,null,null,null]; renderPrep(); dmsg('Starter units spawned', 'ok'); };
-    document.getElementById('bquit').onclick=()=>{ document.getElementById('battle').style.display='none'; document.getElementById('prep').style.display='block'; dmsg('Exited battle early', 'warn'); };
+    document.getElementById('spawn').onclick=()=>{ state.rowF=[makeUnit('K'),null,null,null]; state.rowB=[null,makeUnit('A'),null,null]; state.bench=[makeUnit('H'),null,null,null,null]; renderPrep(); };
+    document.getElementById('bquit').onclick=()=>{ document.getElementById('battle').style.display='none'; document.getElementById('prep').style.display='block'; };
     document.getElementById('bspeed').onclick=()=>{ speedIdx=(speedIdx+1)%SPEEDS.length; if(battle) battle.speed=SPEEDS[speedIdx]; document.getElementById('bspeed').textContent=SPEEDS[speedIdx]+'x'; };
     document.getElementById('bcontinue').onclick=()=>{
       const victory = (battle && battle.result==='win');
-      if(victory){ state.wave += 1; state.gold += 5; for(const u of [...state.rowF,...state.rowB].filter(Boolean)){ u.hp = Math.max(u.hp, Math.floor(u.maxhp*0.7)); } }
+      if(victory){ state.wave += 1; state.gold += 5; for(const u of [...state.rowF,...state.rowB].filter(Boolean)){ u.hp=Math.max(u.hp, Math.floor(u.maxhp*0.7)); } }
       renderPrep(); rollShop();
       document.getElementById('battle').style.display='none'; document.getElementById('prep').style.display='block';
-      dmsg(victory?`Victory! +5g. Wave ${state.wave}`:'Defeat... Try again', victory?'ok':'warn');
     };
   }
 
-  function safeInit(){
+  function init(){
     try{
       wire();
       state.rowF[0]=makeUnit('K'); state.rowB[1]=makeUnit('A'); state.bench[0]=makeUnit('H');
       renderPrep(); rollShop();
-      dmsg('Init OK — sprites & slow combat', 'ok');
-    }catch(e){
-      console.error(e); dmsg('Init error: '+e.message, 'err');
-    }
+      dmsg('Init OK — Retro Paper build');
+    }catch(e){ dmsg('Init error: '+e.message); }
   }
-  if(document.readyState==='complete' || document.readyState==='interactive'){ setTimeout(safeInit, 0); }
-  else { document.addEventListener('DOMContentLoaded', safeInit); }
-  window.addEventListener('error', (e)=>{ dmsg('Runtime error: '+e.message, 'err'); });
+  if(document.readyState==='complete' || document.readyState==='interactive'){ setTimeout(init, 0); } else { document.addEventListener('DOMContentLoaded', init); }
 })();
 </script>
 </body>
